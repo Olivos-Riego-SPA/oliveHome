@@ -18,32 +18,32 @@ visible: { opacity: 1, transition: { duration: 2 } },
 const SideModuleLeft: React.FC<SideModuleLeftProps> = ({ title, description, moduleImageSrc, backgroundImageSrc, additionalImageSrc }) => {
   return (
     <motion.div
-      className="flex flex-col items-center md:items-end relative  w-screen xl:w-[98.5vw] lg:w-[98.5vw] md:w-[98.5vw] pb-1"
+      className="relative w-full overflow-hidden shadow-lg"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
       variants={fadeInFromLeftVariants}
     >
-      <div className="w-full p-4 flex flex-col md:flex-row items-start relative">
-        <div className="absolute inset-0 z-0 w-full h-full">
-          <Image src={backgroundImageSrc} alt="Background" fill  style={{objectFit:"cover"}} />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-95"></div>
-        </div>
-        <div className="relative z-10 w-full flex flex-col md:flex-row justify-start items-center">
-          {additionalImageSrc && (
-            <div className="flex justify-start items-center min-w-[300px] h-full mr-4">
-              <Image src={additionalImageSrc} width={300} height={300} alt="Additional Image" className="rounded-lg" />
-            </div>
-          )}
-          <div className="flex flex-col items-start">
-            <Image src={moduleImageSrc} alt={title} width={80} height={80} className="rounded-lg mb-4" />
-            <h3 className="text-3xl font-bold mb-4 text-white text-left">{title}</h3>
-            <p className="text-lg text-white mb-4 text-justify lg:mr-36 sm:mr-3 md:mr-3">{description}</p>
-          </div>
-        </div>
+      <div className="absolute inset-0 z-0">
+        <Image src={backgroundImageSrc} alt="" fill style={{objectFit:"cover"}} />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40"></div>
       </div>
-      <div className="w-full h-auto relative">
-        <Image src={backgroundImageSrc} alt="Background" fill  style={{objectFit:"cover"}} className="rounded-lg" />
+      <div className="relative z-10 w-full px-6 md:px-16 lg:px-24 py-16 md:py-20 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+        {additionalImageSrc && (
+          <div className="flex-shrink-0 flex justify-center items-center">
+            <Image src={additionalImageSrc} width={380} height={380} alt={`Vista previa ${title}`} className="rounded-lg drop-shadow-2xl" />
+          </div>
+        )}
+        <div className="flex flex-col items-start flex-1 max-w-3xl">
+          <div className="flex items-center gap-4 mb-5">
+            <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
+              <Image src={moduleImageSrc} alt="" width={56} height={56} />
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold text-white">{title}</h3>
+          </div>
+          <div className="h-1 w-16 bg-clear rounded-full mb-5"></div>
+          <p className="text-base md:text-lg text-white/90 leading-relaxed">{description}</p>
+        </div>
       </div>
     </motion.div>
   );

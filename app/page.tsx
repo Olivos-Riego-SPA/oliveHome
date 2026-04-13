@@ -3,8 +3,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import Image from 'next/image';
-import SideModuleLeft from '@/components/side_module_left';
-import SideModuleRight from '@/components/side_module_right';
 //!Imagenes
 import logo from './public/images/logo.png';
 import riego from './public/images/eficienciawidget.png';
@@ -32,15 +30,74 @@ import whatsapp from './public/images/whaza.webp';
 import NosotrosSection from '@/components/nosotros_section'
 import { motion } from 'framer-motion';
 import BottomSection from '@/components/bottom_section';
+import ModulesTabs, { ModuleItem } from '@/components/modules_tabs';
+import TutorialesTeaser from '@/components/tutoriales_teaser';
+import Footer from '@/components/footer';
+import SiteHeader from '@/components/site_header';
 
 const fadeInVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 2 } },
 };
 
+const modulesData: ModuleItem[] = [
+  {
+    id: 'riego',
+    title: 'Módulo Riego',
+    shortLabel: 'Riego',
+    description: 'Revisa los volúmenes aplicados por sector, analiza desviaciones entre caudales planificados y reales, monitorea alarmas en tiempo real y compara con datos históricos de temporadas anteriores. Una visión integral para optimizar el uso del agua y tomar decisiones basadas en evidencia.',
+    iconSrc: riego.src,
+    previewSrc: desktopRiego.src,
+    backgroundSrc: backRiego.src,
+  },
+  {
+    id: 'pozo',
+    title: 'Módulo Pozo',
+    shortLabel: 'Pozo',
+    description: 'Monitorea en tiempo real el caudal y el nivel freático de tus pozos, con reportes automáticos incluidos los requeridos por la DGA. Seguimiento eficiente, detección de anomalías y cumplimiento normativo para una gestión hídrica precisa.',
+    iconSrc: pozo.src,
+    previewSrc: desktopPozo.src,
+    backgroundSrc: backPozo.src,
+  },
+  {
+    id: 'suelo',
+    title: 'Módulo Suelo',
+    shortLabel: 'Suelo',
+    description: 'Monitorea la humedad del suelo en tiempo real según los riegos aplicados. Gestiona umbrales personalizados para recibir alertas oportunas y ajustar las estrategias de riego, optimizando el uso del agua y la productividad.',
+    iconSrc: suelo.src,
+    previewSrc: desktopSuelo.src,
+    backgroundSrc: backSuelo.src,
+  },
+  {
+    id: 'clima',
+    title: 'Módulo Clima',
+    shortLabel: 'Clima',
+    description: 'Monitorea temperatura, humedad, viento, radiación solar y precipitaciones en tiempo real. Anticipa condiciones meteorológicas y ajusta tus decisiones agrícolas para maximizar la eficiencia de tus recursos.',
+    iconSrc: clima.src,
+    previewSrc: desktopClima.src,
+    backgroundSrc: backClima.src,
+  },
+  {
+    id: 'planta',
+    title: 'Módulo Planta',
+    shortLabel: 'Planta',
+    description: 'Sensores instalados directamente en los árboles entregan información precisa del estado hídrico y fisiológico. Registra también mediciones manuales de potencial hídrico e integra todo en análisis detallados para decisiones informadas.',
+    iconSrc: planta.src,
+    previewSrc: desktopPlanta.src,
+    backgroundSrc: backPlanta.src,
+  },
+  {
+    id: 'analisis',
+    title: 'Módulo Análisis de datos',
+    shortLabel: 'Análisis',
+    description: 'Paneles personalizados para visualizar tendencias, identificar patrones y generar reportes detallados. Integra datos de todos los módulos en una perspectiva global que facilita la gestión eficiente de tus recursos.',
+    iconSrc: analisis.src,
+    previewSrc: desktopAnalisis.src,
+    backgroundSrc: backAnalisis.src,
+  },
+];
+
 export default function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  //const [isStatsVisible, setIsStatsVisible] = useState(false)
   const modulosRef = useRef<HTMLElement>(null)
   const contactoRef = useRef<HTMLElement>(null)
   const statsRef = useRef<HTMLElement>(null)
@@ -49,7 +106,6 @@ export default function Home() {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: 'smooth' })
     }
-    setIsMenuOpen(false)
   }
 
   useEffect(() => {
@@ -75,38 +131,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header fijo */}
-      <header className="fixed top-0 left-0 right-0 bg-primary z-50 shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center py-4">
-            <Image
-              src={logo.src}
-              priority
-              alt="Olive+"
-              width={130}
-              height={80} />
-            <nav className="hidden md:flex space-x-4">
-              <Button className='text-white' variant="ghost" onClick={() => scrollToSection(modulosRef)}>Módulos</Button>
-              <Button className='text-white' variant="ghost" onClick={() => scrollToSection(contactoRef)}>Contacto</Button>
-              <a href="/tutoriales"><Button className='text-white' variant="ghost">Tutoriales</Button></a>
-              <Button className='text-white bg-clear border-clear' variant="outline" onClick={() => scrollToSection(contactoRef)}>Ingresar a Olive+</Button>
-              <Button variant="outline" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                Menu
-              </Button>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      {/* Menú móvil */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
-          <div className="bg-white p-4 mt-16">
-            <Button variant="ghost" className="w-full text-left text-black" onClick={() => scrollToSection(modulosRef)}>Módulos</Button>
-            <Button variant="ghost" className="w-full text-left text-black" onClick={() => scrollToSection(contactoRef)}>Contacto</Button>
-          </div>
-        </div>
-      )}
+      <SiteHeader
+        onScrollToModulos={() => scrollToSection(modulosRef)}
+        onScrollToContacto={() => scrollToSection(contactoRef)}
+      />
 
       {/* Hero con video y logo */}
       <section
@@ -129,6 +157,8 @@ export default function Home() {
                 loop
                 muted
                 playsInline
+                preload="metadata"
+                aria-hidden="true"
                 className="absolute top-0 left-0 w-full h-full object-cover"
               >
                 <source src="https://oliveplus.s3.us-east-1.amazonaws.com/public/oliveHomeBackhd2.mp4" />
@@ -161,9 +191,9 @@ export default function Home() {
           <div className='sm:invisible md:invisible lg:visible xl:visible 2xl:visible'>
             <div className="absolute z-10 flex items-center justify-start h-full w-full">
               <div className="invisible lg:visible xl:visible 2xl:visible px-4 sm:px-8 md:px-12 lg:px-16 w-full md:w-3/4 relative">
-                <h1 className="text-whit text-3xl sm:text-2xl md:text-4xl lg:text-5xl 2xl:text-8xl font-bold">La manera más fácil de </h1>
-                <h1 className="text-whit text-3xl sm:text-2xl md:text-4xl lg:text-5xl 2xl:text-8xl font-bold">gestionar tu riego,</h1>
-                <h1 className="text-whit text-3xl sm:text-2xl md:text-4xl lg:text-5xl 2xl:text-8xl font-bold">ahora a tu alcance</h1>
+                <h1 className="text-whit text-4xl md:text-5xl lg:text-6xl 2xl:text-8xl font-bold leading-tight">
+                  La manera más fácil de<br />gestionar tu riego,<br />ahora a tu alcance
+                </h1>
                 <Image
                   className='mt-4'
                   src={logo.src}
@@ -177,7 +207,7 @@ export default function Home() {
                 <div className="absolute inset-0 w-full h-full">
                   {/*<Image
                     src={backMob.src}
-                    alt="Monitoreo de Cultivo"
+                    alt=""
                     fill
                      style={{objectFit:"cover"}}
                     className="rounded-lg"
@@ -188,8 +218,8 @@ export default function Home() {
                     <div className="px-4 sm:px-8 md:px-12 lg:px-16 w-full text-center">
                       <div className='sm:flex sm:justify-center sm:items-center md:justify-start md:items-start'>
                         <Image
-                          src={mainModules.src} // Change this to the desired image path
-                          alt="Background Image"
+                          src={mainModules.src}
+                          alt="Vista de módulos de Olive+"
                           width={450}
                           height={100}
                           className=" w-[350px] z-0 h-[300px]"
@@ -204,9 +234,9 @@ export default function Home() {
                           height={100} />
                       </div>
 
-                      <h1 className="text-whit text-3xl sm:text-3xl md:text-5xl font-bold md:text-justify sm:text-center">La manera más fácil de </h1>
-                      <h1 className="text-whit text-3xl sm:text-3xl md:text-5xl font-bold md:text-justify sm:text-center">gestionar tu riego,</h1>
-                      <h1 className="text-whit text-3xl sm:text-3xl md:text-5xl font-bold md:text-justify sm:text-center">ahora a tu alcance</h1>
+                      <p className="text-whit text-3xl md:text-5xl font-bold text-center leading-tight" aria-hidden="true">
+                        La manera más fácil de<br />gestionar tu riego,<br />ahora a tu alcance
+                      </p>
 
                     </div>
                   </div>
@@ -214,18 +244,18 @@ export default function Home() {
               </div>
             </div>
             <Image
-              src={mainModules.src} // Change this to the desired image path
-              alt="Background Image"
+              src={mainModules.src}
+              alt="Vista general de la plataforma Olive+"
               width={450}
               height={100}
-              className="absolute bottom-10 right-0 h-[60vh] w-auto z-0 invisible lg:visible xl:visible 2xl:visible"  
+              className="absolute bottom-10 right-0 h-[60vh] w-auto z-0 invisible lg:visible xl:visible 2xl:visible"
             />
           </div>
         </motion.div>
       </section>
 
       <motion.section
-        className="pt-8 bg-white text-center h-screen flex items-center relative"
+        className="py-16 md:py-20 bg-white text-center flex items-center relative"
         id='bienvenidaText'
         initial="hidden"
         whileInView="visible"
@@ -235,7 +265,7 @@ export default function Home() {
         <div className="absolute inset-0 w-full h-full">
           <Image
             src={fondocentro.src}
-            alt="Monitoreo de Cultivo"
+            alt=""
             fill
             style={{objectFit:"cover"}}
             className="rounded-lg"
@@ -248,109 +278,32 @@ export default function Home() {
               Innovación y aprendizaje para un futuro sostenible.
             </p>
             <p className="text-xl sm:text-base md:text-xl text-whit">
-              Un espacio creado para transformar la agricultura a través de la innovación, la educación y el acceso a herramientas tecnológicas. Aquí, conectamos a agricultores, expertos y entusiastas del sector con conocimientos prácticos, cursos interactivos y recursos digitales diseñados para impulsar prácticas sostenibles y maximizar la eficiencia en el uso del agua. Nuestro objetivo es ser el puente entre la tecnología de punta y un futuro agrícola más responsable y productivo. ¡Explora, aprende y crece con Olive+! 🌱🚀
+              Un espacio creado para transformar la agricultura a través de la innovación, la educación y el acceso a herramientas tecnológicas. Aquí, conectamos a agricultores, expertos y entusiastas del sector con conocimientos prácticos, cursos interactivos y recursos digitales diseñados para impulsar prácticas sostenibles y maximizar la eficiencia en el uso del agua. Nuestro objetivo es ser el puente entre la tecnología de punta y un futuro agrícola más responsable y productivo. Explora, aprende y crece con Olive+.
             </p>
           </div>
         </div>
       </motion.section>
-      <div className='text-4xl md:text-5xl sm:text-4xl text-blk md:px-14 sm:px-0 text-center md:text-justify py-4 tracking-tighter '>
+      <h2 className='text-4xl md:text-5xl text-blk md:px-14 text-center md:text-justify py-8 tracking-tighter'>
         Sembramos <span className='font-bold'>Calidad</span>, Cosechamos <span className='font-bold'>Confianza</span>
-      </div>
+      </h2>
       <NosotrosSection />
 
-      <div className='text-4xl md:text-5xl sm:text-4xl text-blk md:px-14 sm:px-0 text-center md:text-justify py-4 tracking-tighter '>
+      <h2 className='text-4xl md:text-5xl text-blk md:px-14 text-center md:text-justify py-8 tracking-tighter'>
         Hazlo <span className='font-bold'>Fácil</span>, Hazlo <span className='font-bold'>Mejor</span>
-      </div>
+      </h2>
       <motion.section
-        className="py-2 bg-gray-100"
+        ref={modulosRef}
+        id="modulos"
+        className="py-2 bg-gray-100 w-full"
       >
-        <div className="container">
-          <SideModuleLeft
-            title="Módulo Riego"
-            description="Podrás revisar los volúmenes aplicados por sector, analizar el porcentaje de desviación de los caudales planificados respecto a los reales, monitorear las alarmas en tiempo real para identificar desviaciones críticas, y realizar comparaciones detalladas con datos históricos de temporadas anteriores. Esto te permitirá obtener una visión integral para optimizar el uso de los recursos hídricos y tomar decisiones informadas basadas en patrones y tendencias identificadas."
-            moduleImageSrc={riego.src}
-            additionalImageSrc={desktopRiego.src}
-            backgroundImageSrc={backRiego.src}
-          />
-          <SideModuleRight
-            title="Módulo Pozo"
-            description="Monitorea en tiempo real el caudal y el nivel freático de tus pozos, con herramientas avanzadas para la generación de reportes automáticos, incluyendo los requeridos por la DGA. Este módulo te permite realizar un seguimiento eficiente de los parámetros críticos, identificar posibles anomalías y garantizar el cumplimiento normativo, facilitando una gestión hídrica más precisa y sostenible"
-            moduleImageSrc={pozo.src}
-            additionalImageSrc={desktopPozo.src}
-            backgroundImageSrc={backPozo.src}
-          />
-          <SideModuleLeft
-            title="Módulo Suelo"
-            description="Monitorea la humedad del suelo en tiempo real en función de los riegos aplicados, permitiéndote evaluar la eficacia del riego y la disponibilidad hídrica para los cultivos. Además, este módulo gestiona umbrales personalizados de toma de decisiones, brindándote alertas oportunas y recomendaciones para ajustar las estrategias de riego según los niveles de humedad detectados. Optimiza el uso del agua y mejora la productividad agrícola de manera sostenible."
-            moduleImageSrc={suelo.src}
-            additionalImageSrc={desktopSuelo.src}
-            backgroundImageSrc={backSuelo.src}
-          />
-          <SideModuleRight
-            title="Módulo Clima"
-            description="Monitorea en tiempo real las principales variables climáticas, como temperatura, humedad, velocidad y dirección del viento, radiación solar y precipitaciones. Este módulo proporciona información clave para anticipar condiciones meteorológicas, optimizar las decisiones agrícolas y ajustar las estrategias de manejo según los cambios climáticos, maximizando la eficiencia de tus recursos."
-            moduleImageSrc={clima.src}
-            additionalImageSrc={desktopClima.src}
-            backgroundImageSrc={backClima.src}
-          />
-          <SideModuleLeft
-            title="Módulo Planta"
-            description="Monitorea sensores instalados directamente en los árboles para obtener información precisa y en tiempo real sobre su estado hídrico y fisiológico. Además, permite registrar de forma manual el potencial hídrico de las plantas, integrando estos datos en análisis detallados que ayudan a tomar decisiones informadas sobre el manejo de riego y la salud de los cultivos. Este módulo te ofrece un enfoque avanzado para maximizar la eficiencia y productividad de tus plantaciones."
-            moduleImageSrc={planta.src}
-            additionalImageSrc={desktopPlanta.src}
-            backgroundImageSrc={backPlanta.src}
-          />
-          <SideModuleRight
-            title="Módulo Análisis de datos"
-            description="Explora información clave a través de paneles personalizados, diseñados específicamente para adaptarse a tus necesidades. Este módulo te permite visualizar tendencias, identificar patrones y generar reportes detallados para una mejor toma de decisiones. Integra datos de distintos módulos, ofreciendo una perspectiva global y precisa que facilita la gestión eficiente de tus recursos y estrategias."
-            moduleImageSrc={analisis.src}
-            additionalImageSrc={desktopAnalisis.src}
-            backgroundImageSrc={backAnalisis.src}
-          />
-        </div>
+        <ModulesTabs modules={modulesData} />
       </motion.section>
-      <div className='text-4xl md:text-5xl sm:text-4xl text-blk md:px-14 sm:px-0 text-center md:text-justify py-4 tracking-tighter '>
+      <h2 className='text-4xl md:text-5xl text-blk md:px-14 text-center md:text-justify py-8 tracking-tighter'>
         Aprende <span className='font-bold'>Fácil</span>, Crece <span className='font-bold'>Con Nosotros</span>
-      </div>
-      <motion.section
-        className="py-2 bg-gray-100 w-100 h-[80vh] flex items-start relative"
-        id='tutorialesGuias'
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeInVariants}
-      >
-        <div className="absolute inset-0 w-full h-full">
-          <Image
-            src={fondotuto.src}
-            alt="Monitoreo de Cultivo"
-            fill
-            style={{objectFit:"cover"}}
-            className="rounded-lg"
-          />
-        </div>
-        <div className="container min-w-full flex md:flex-row items-center h-full relative z-10 p-10">
-          <div className="w-full md:w-1/2 p-8 text-justify bg-opacity-30 rounded-lg backdrop-filter backdrop-blur-lg">
-            {/*<h3 className="text-6xl md:text-4xl text-whit font-bold mb-4">Tutoriales y Guías</h3>*/}
-            <p className="lg:text-2xl sm:text-2xl md:text-2xl text-whit mb-4">
-              En Olive+, ofrecemos una sección de tutoriales y guías muy completa para que puedas utilizar nuestra plataforma en su máximo potencial. Aquí encontrarás:
-            </p>
-            <ul className="list-disc list-inside lg:text-xl sm:text-base md:text-base text-whit mb-4">
-              <li>Guías paso a paso para configurar y utilizar Olive+.</li>
-              <li>Videos tutoriales que te mostrarán cómo aprovechar todas las funcionalidades.</li>
-              <li>Webinars en vivo y grabados para aprender de expertos en la materia.</li>
-            </ul>
-            <p className="lg:text-xl sm:text-base md:text-base text-whit mb-4">
-              Nuestro objetivo es asegurarnos de que tengas todas las herramientas y conocimientos necesarios para optimizar el riego de tus cultivos y mejorar la productividad de manera sostenible.
-            </p>
-            <a href="/tutoriales" className='text-white'>
-              <Button>Ir a Tutoriales</Button>
-            </a>
-          </div>
-        </div>
-      </motion.section>
+      </h2>
+      <TutorialesTeaser />
       <div className='right-3 bottom-3 fixed text-blk w-[70px] h-[70px] z-50 rounded'>
-        <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="flex items-center text-green-600 hover:text-green-700">
+        <a href="https://wa.me/56933720947" target="_blank" rel="noopener noreferrer" className="flex items-center text-green-600 hover:text-green-700">
           <Image
             src={whatsapp.src}
             alt="Contacto"
@@ -360,21 +313,13 @@ export default function Home() {
           />
         </a>
       </div>
-      <div className='text-4xl md:text-5xl sm:text-4xl text-blk md:px-14 sm:px-0 text-center md:text-justify py-4 tracking-tighter '>
-        Ellos
-        <span className='font-bold'> Cultivan</span>
-        , Con
-        <span className='font-bold'> Nosotros</span>
-      </div>
+      <h2 className='text-4xl md:text-5xl text-blk md:px-14 text-center md:text-justify py-8 tracking-tighter'>
+        Más que una <span className='font-bold'>plataforma</span>, un <span className='font-bold'>equipo</span>
+      </h2>
 
       <BottomSection />
 
-      {/* Footer */}
-      <footer className="bg-primary text-white py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2024 Olive+. Todos los derechos reservados.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
