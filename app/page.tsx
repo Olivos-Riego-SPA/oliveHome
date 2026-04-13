@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
+import { useRef, useEffect } from 'react'
 import Image from 'next/image';
 //!Imagenes
 import logo from './public/images/logo.png';
@@ -11,7 +10,6 @@ import clima from './public/images/iconclima.png';
 import pozo from './public/images/iconfuente.png';
 import planta from './public/images/iconplanta.png';
 import fondocentro from './public/images/fondocentro.jpg';
-import fondotuto from './public/images/fondotuto.jpg';
 import analisis from './public/images/dataanalitics.png';
 import mainModules from './public/images/mainModules.png';
 import desktopClima from './public/images/desktopClima.png';
@@ -102,7 +100,7 @@ export default function Home() {
   const contactoRef = useRef<HTMLElement>(null)
   const statsRef = useRef<HTMLElement>(null)
 
-  const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
+  const scrollToSection = (ref: React.RefObject<HTMLElement | null>) => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: 'smooth' })
     }

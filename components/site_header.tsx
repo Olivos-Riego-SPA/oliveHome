@@ -6,19 +6,17 @@ import { Button } from '@/components/ui/button'
 import logo from './../app/public/images/logo.png'
 
 interface SiteHeaderProps {
-  variant?: 'landing' | 'page'
   onScrollToModulos?: () => void
   onScrollToContacto?: () => void
 }
 
 const SiteHeader: React.FC<SiteHeaderProps> = ({
-  variant = 'page',
   onScrollToModulos,
   onScrollToContacto,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const handleInternalNav = (action?: () => void, fallback?: string) => {
+  const handleInternalNav = (action: (() => void) | undefined, fallback?: string) => {
     if (action) {
       action()
     } else if (fallback) {
