@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import logo from './../app/public/images/logo.png'
@@ -15,6 +15,13 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
   onScrollToContacto,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const handleInternalNav = (action: (() => void) | undefined, fallback?: string) => {
     if (action) {
@@ -27,13 +34,19 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 bg-primary z-50 shadow-md">
-        <div className="container mx-auto px-4">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? 'bg-primary shadow-md'
+            : 'bg-transparent backdrop-blur-sm'
+        }`}
+      >
+        <div className="container mx-auto px-6">
           <div className="flex justify-between items-center py-4">
             <a href="/" aria-label="Ir al inicio">
               <Image src={logo.src} priority alt="Olive+" width={130} height={80} />
             </a>
-            <nav className="hidden md:flex space-x-4" aria-label="Navegación principal">
+            <nav className="hidden md:flex items-center gap-1" aria-label="Navegación principal">
               <Button
                 className="text-white"
                 variant="ghost"
@@ -76,28 +89,28 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
 
       {isMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsMenuOpen(false)}
         >
           <div
-            className="bg-white p-4 mt-16 flex flex-col gap-1"
+            className="bg-primary p-4 mt-16 flex flex-col gap-1"
             onClick={(e) => e.stopPropagation()}
           >
             <Button
               variant="ghost"
-              className="w-full justify-start text-black"
+              className="w-full justify-start text-white hover:text-white/80"
               onClick={() => handleInternalNav(onScrollToModulos, '/#modulos')}
             >
               Módulos
             </Button>
             <Button
               variant="ghost"
-              className="w-full justify-start text-black"
+              className="w-full justify-start text-white hover:text-white/80"
               onClick={() => handleInternalNav(onScrollToContacto, '/#nosotrosSection')}
             >
               Nosotros
             </Button>
-            <Button asChild variant="ghost" className="w-full justify-start text-black">
+            <Button asChild variant="ghost" className="w-full justify-start text-white hover:text-white/80">
               <a href="/tutoriales" onClick={() => setIsMenuOpen(false)}>
                 Tutoriales
               </a>

@@ -45,11 +45,11 @@ const modules: ModuleInfo[] = [
   { id: 'riego', name: 'Riego', available: true },
   { id: 'suelo', name: 'Suelo', available: true },
   { id: 'planta', name: 'Planta', available: true },
+  { id: 'configuracion', name: 'Configuración', available: true },
   { id: 'pozo', name: 'Pozo', available: false },
   { id: 'clima', name: 'Clima', available: false },
   { id: 'analisis', name: 'Análisis de datos', available: false },
   { id: 'general', name: 'General', available: false },
-  { id: 'configuracion', name: 'Configuración', available: false },
 ]
 
 const videos: VideoData[] = [
@@ -83,6 +83,20 @@ const videos: VideoData[] = [
     module: 'Planta',
     moduleColor: 'bg-clear',
     featured: true,
+  },
+  {
+    id: 17,
+    youtubeId: 'eYMZgvOTOFU',
+    title: 'Configuración - Días Grado',
+    module: 'Configuración',
+    moduleColor: 'bg-violet-600',
+  },
+  {
+    id: 18,
+    youtubeId: 'FMQWkLYtLjY',
+    title: 'Configuración - Horas Frío',
+    module: 'Configuración',
+    moduleColor: 'bg-violet-600',
   },
   {
     id: 12,
