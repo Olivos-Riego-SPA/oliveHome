@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import EscenaModulos3D from '@/components/escena_modulos_3d'
 
 export interface ModuleItem {
   id: string
@@ -135,16 +136,16 @@ const ModulesTabs: React.FC<ModulesTabsProps> = ({ modules, autoplayMs = 6000 })
 
           {/* Contenido del módulo activo */}
           <div className="flex-1 min-h-[420px] md:min-h-[480px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.4 }}
-                className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 h-full"
-              >
-                <div className="flex-1 max-w-2xl">
+            <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 h-full">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex-1 max-w-2xl"
+                >
                   <div className="flex items-center gap-4 mb-5">
                     <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
                       <Image src={active.iconSrc} alt="" width={56} height={56} />
@@ -155,18 +156,21 @@ const ModulesTabs: React.FC<ModulesTabsProps> = ({ modules, autoplayMs = 6000 })
                   <p className="text-base md:text-lg text-white/90 leading-relaxed">
                     {active.description}
                   </p>
-                </div>
-                <div className="flex-shrink-0">
-                  <Image
-                    src={active.previewSrc}
-                    alt={`Vista previa ${active.title}`}
-                    width={420}
-                    height={420}
-                    className="rounded-xl drop-shadow-2xl"
-                  />
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                </motion.div>
+              </AnimatePresence>
+              {/* Escena 3D persistente (fuera del AnimatePresence para que el canvas
+                  no se remonte en cada ciclo); sigue el módulo activo por id */}
+              <div className="w-full max-w-[540px] h-[380px] sm:h-[480px] flex-shrink-0 lg:w-[540px]">
+                <EscenaModulos3D
+                  moduloId={active.id}
+                  voxels
+                  onSeleccionModulo={(id) => {
+                    const i = modules.findIndex((m) => m.id === id)
+                    if (i !== -1) handleSelect(i)
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

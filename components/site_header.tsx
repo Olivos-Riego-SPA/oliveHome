@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import logo from './../app/public/images/logo.png'
@@ -16,6 +17,17 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
+
+  // En el home, "Inicio" vuelve al tope sin recargar; en otras páginas navega a /
+  const irAlInicio = () => {
+    if (pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      window.location.href = '/'
+    }
+    setIsMenuOpen(false)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -47,6 +59,9 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
               <Image src={logo.src} priority alt="Olive+" width={130} height={80} />
             </a>
             <nav className="hidden md:flex items-center gap-1" aria-label="Navegación principal">
+              <Button className="text-white" variant="ghost" onClick={irAlInicio}>
+                Inicio
+              </Button>
               <Button
                 className="text-white"
                 variant="ghost"
@@ -96,6 +111,13 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
             className="bg-primary p-4 mt-16 flex flex-col gap-1"
             onClick={(e) => e.stopPropagation()}
           >
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-white hover:text-white/80"
+              onClick={irAlInicio}
+            >
+              Inicio
+            </Button>
             <Button
               variant="ghost"
               className="w-full justify-start text-white hover:text-white/80"

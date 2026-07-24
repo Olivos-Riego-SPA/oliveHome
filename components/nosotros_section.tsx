@@ -11,7 +11,7 @@ type PillarId = 'mision' | 'estrategias' | 'plataforma'
 
 interface Pillar {
   id: PillarId
-  icon: React.ElementType
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   title: string
   summary: string
   expandable: boolean
