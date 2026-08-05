@@ -20,7 +20,7 @@ import iconMailOlivosInv from "../../public/firmas/icon_mail_olivos_inv.png";
 import iconPinOlivosInv from "../../public/firmas/icon_pin_olivos_inv.png";
 
 const urlOlivos = "https://www.olivos.cl";
-const urlOlivePlus = "https://home.oliveplus.cl";
+const urlOlivePlus = "https://www.oliveplus.cl";
 
 interface FirmaData {
   nombre: string;
