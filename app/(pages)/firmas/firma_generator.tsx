@@ -248,7 +248,10 @@ function FirmaPreview({ data, logo, tema }: { data: FirmaData; logo: LogoOption;
   const textoLink = logo.fondoOscuro ? "#FFFFFF" : tema.link;
 
   const pintado = logo.fondoOscuro;
-  const fondoSuperior = pintado ? tema.banner : undefined;
+  const fondoSuperior = pintado ? tema.banner : "#FFFFFF";
+  // linear-gradient plano: los modos oscuros de los clientes de correo reescriben
+  // background-color pero no background-image, así el color queda anclado.
+  const plano = (color: string) => `linear-gradient(${color}, ${color})`;
   const iconos = pintado ? tema.iconosInv : tema.iconos;
   const separador = pintado ? "rgba(255, 255, 255, 0.35)" : "#B0B3BD";
   const telHref = `https://wa.me/${telefono.replace(/\D/g, "")}`;
@@ -264,16 +267,26 @@ function FirmaPreview({ data, logo, tema }: { data: FirmaData; logo: LogoOption;
   );
 
   return (
-    <table cellPadding={0} cellSpacing={0} style={{ borderCollapse: "collapse", fontFamily: "Arial, Helvetica, sans-serif", width: 640 }}>
+    <table
+      cellPadding={0}
+      cellSpacing={0}
+      style={{
+        borderCollapse: "collapse",
+        fontFamily: "Arial, Helvetica, sans-serif",
+        width: 640,
+        backgroundColor: "#FFFFFF",
+        backgroundImage: plano("#FFFFFF"),
+      }}
+    >
       <tbody>
         <tr>
           {/* Logo */}
-          <td style={{ verticalAlign: "middle", padding: "14px 24px 14px 16px", backgroundColor: fondoSuperior }}>
+          <td style={{ verticalAlign: "middle", padding: "14px 24px 14px 16px", backgroundColor: fondoSuperior, backgroundImage: plano(fondoSuperior), width: logo.width }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={logo.src} alt="Logo Olive" width={logo.width} style={{ display: "block" }} />
           </td>
           {/* Nombre y cargo */}
-          <td style={{ verticalAlign: "middle", padding: "14px 24px 14px 0", backgroundColor: fondoSuperior, whiteSpace: "nowrap" }}>
+          <td style={{ verticalAlign: "middle", padding: "14px 24px 14px 0", backgroundColor: fondoSuperior, backgroundImage: plano(fondoSuperior) }}>
             <p style={{ margin: 0, fontSize: 16, fontWeight: "bold", color: textoNombre }}>{nombre}</p>
             <p style={{ margin: "2px 0 0", fontSize: 13, color: textoCargo }}>{cargo}</p>
           </td>
@@ -284,6 +297,7 @@ function FirmaPreview({ data, logo, tema }: { data: FirmaData; logo: LogoOption;
               borderLeft: `1px solid ${separador}`,
               padding: "14px 16px 14px 24px",
               backgroundColor: fondoSuperior,
+              backgroundImage: plano(fondoSuperior),
               width: 250,
             }}
           >
@@ -308,13 +322,13 @@ function FirmaPreview({ data, logo, tema }: { data: FirmaData; logo: LogoOption;
         </tr>
         {/* Línea blanca separadora entre la firma y el banner */}
         <tr>
-          <td colSpan={3} style={{ height: 8, fontSize: 0, lineHeight: 0 }}>
+          <td colSpan={3} style={{ height: 8, fontSize: 0, lineHeight: 0, backgroundColor: "#FFFFFF", backgroundImage: plano("#FFFFFF") }}>
             &nbsp;
           </td>
         </tr>
         {/* Banner inferior */}
         <tr>
-          <td colSpan={3} style={{ backgroundColor: tema.banner, padding: "10px 16px" }}>
+          <td colSpan={3} style={{ backgroundColor: tema.banner, backgroundImage: plano(tema.banner), padding: "10px 16px" }}>
             <table cellPadding={0} cellSpacing={0} style={{ borderCollapse: "collapse", width: "100%" }}>
               <tbody>
                 <tr>
