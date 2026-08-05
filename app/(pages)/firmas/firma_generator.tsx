@@ -257,7 +257,7 @@ function FirmaPreview({ data, logo, tema }: { data: FirmaData; logo: LogoOption;
     <tr>
       <td style={{ paddingRight: 10, paddingBottom: ultima ? 0 : 8, verticalAlign: "middle" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={icono} alt="" width={50} height={50} style={{ display: "block" }} />
+        <img src={icono} alt="" width={38} height={38} style={{ display: "block" }} />
       </td>
       <td style={{ paddingBottom: ultima ? 0 : 8, verticalAlign: "middle", fontSize: 12 }}>{contenido}</td>
     </tr>
