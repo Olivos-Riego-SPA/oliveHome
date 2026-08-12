@@ -99,8 +99,9 @@ export default function FirmaGenerator() {
     correo: "",
     direccion: "",
   });
-  const [logoId, setLogoId] = useState(logos[0].id);
-  const [temaId, setTemaId] = useState(temas[0].id);
+  // Estandarizado: tema Olivos + logo Olivos (color). Los selects quedan comentados abajo.
+  const [logoId, setLogoId] = useState("olivos");
+  const [temaId, setTemaId] = useState("olivos");
   const [copiado, setCopiado] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -163,6 +164,8 @@ export default function FirmaGenerator() {
       <section className="bg-white rounded-xl shadow-sm p-6">
         <h2 className="text-lg font-semibold text-primary mb-4">Datos de la firma</h2>
         <div className="flex flex-col gap-4">
+          {/* Selects de tema y logo comentados mientras se estandariza la firma
+              (tema Olivos + logo Olivos color). Para reactivarlos, descomentar:
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium text-secondary">Tema</span>
             <select
@@ -191,6 +194,7 @@ export default function FirmaGenerator() {
               ))}
             </select>
           </label>
+          */}
           {campos.map(({ key, label, placeholder }) => (
             <label key={key} className="flex flex-col gap-1">
               <span className="text-sm font-medium text-secondary">{label}</span>
