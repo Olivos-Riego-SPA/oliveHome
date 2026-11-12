@@ -2,9 +2,10 @@ import Image from 'next/image'
 import { ArrowUpRight, Mail, MessageCircle } from 'lucide-react'
 import fotoCampo from '@/app/public/images/fondocentro.webp'
 import Ondas from './ondas'
+import Resaltado from './resaltado'
+import CopiarCorreo from './copiar_correo'
 import { APP_URL, CORREO_CONTACTO, WHATSAPP_NUMERO } from './constantes'
 
-const CORREO = CORREO_CONTACTO
 const ASUNTO = 'Quiero conocer Olive+'
 const CUERPO = [
   'Hola, quiero conocer Olive+.',
@@ -14,11 +15,15 @@ const CUERPO = [
   'Cultivo y hectáreas:',
   'Equipos que tengo (controlador, estación, sensores):',
 ].join('\r\n')
-const MAILTO = `mailto:${CORREO}?subject=${encodeURIComponent(ASUNTO)}&body=${encodeURIComponent(CUERPO)}`
+const MAILTO = `mailto:${CORREO_CONTACTO}?subject=${encodeURIComponent(ASUNTO)}&body=${encodeURIComponent(CUERPO)}`
 const WHATSAPP = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent('Hola, quiero conocer Olive+.')}`
 
+const BOTON =
+  'inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full px-7 py-3 text-[19px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-marca-primario'
+
 /**
- * Cierre de la home: escribirnos. Hace de par con el hero (misma ola con foto y ondas).
+ * Cierre de la home: escribirnos. Correo y WhatsApp con el mismo peso (el agricultor en terreno usa
+ * WhatsApp), copiar el correo por si el mailto no abre, y qué pasa después de escribir.
  */
 export default function Contacto() {
   return (
@@ -29,60 +34,72 @@ export default function Contacto() {
         <Ondas className="-bottom-80 -right-48 h-[760px] w-[760px]" />
       </div>
 
-      <div className="relative mx-auto grid max-w-[1440px] gap-12 px-6 py-20 sm:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:items-center lg:gap-20 lg:px-16 lg:py-28">
+      <div className="relative mx-auto grid max-w-[1440px] gap-12 px-6 py-20 sm:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:items-center lg:gap-20 lg:px-16 lg:py-28">
         <div>
           <h2 className="text-balance text-4xl font-normal leading-[1.08] tracking-[-0.01em] sm:text-5xl lg:text-[3.4rem]">
-            Conversemos sobre <b className="font-extrabold">tu campo</b>
+            Conversemos sobre <b className="font-extrabold">tu <Resaltado>campo</Resaltado></b>
           </h2>
-          <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-white/85">
+          <p className="mt-6 max-w-[52ch] text-pretty text-lg leading-relaxed text-white/85">
             Cuéntanos qué cultivas, cuántas hectáreas manejas y qué equipos tienes en terreno. Te mostramos
             Olive+ funcionando y vemos juntos cómo conectarlo a tu campo.
           </p>
-          <a
-            href={MAILTO}
-            className="mt-9 inline-flex h-[56px] items-center gap-3 rounded-full bg-marca-verde px-8 text-lg font-bold text-white shadow-[0_8px_24px_rgba(2,60,30,0.3)] transition-colors hover:bg-marca-verdeOscuro focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-marca-primario"
-          >
-            <Mail className="h-5 w-5" aria-hidden="true" />
-            Escríbenos a {CORREO}
-          </a>
-        </div>
 
-        <ul className="divide-y divide-white/15 rounded-[18px] border border-white/20 bg-white/[0.08] backdrop-blur-sm">
-          <li>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <a href={MAILTO} className={`${BOTON} bg-marca-verde text-white shadow-[0_8px_24px_rgba(2,60,30,0.3)] hover:bg-marca-verdeOscuro`}>
+              <Mail className="h-5 w-5" aria-hidden="true" />
+              Escríbenos por correo
+            </a>
             <a
               href={WHATSAPP}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-4 rounded-t-[18px] px-6 py-5 transition-colors hover:bg-white/[0.06]"
+              className={`${BOTON} bg-white text-marca-primario shadow-[0_8px_24px_rgba(0,0,0,0.18)] hover:bg-marca-p50`}
             >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-marca-verde">
-                <MessageCircle className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <span className="flex-1">
-                <span className="block font-bold">Prefiero WhatsApp</span>
-                <span className="block text-white/75">+56 9 3372 0947</span>
-              </span>
-              <ArrowUpRight className="h-5 w-5 text-white/70 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+              <MessageCircle className="h-5 w-5" aria-hidden="true" />
+              Escríbenos por WhatsApp
             </a>
-          </li>
-          <li>
-            <a
-              href={APP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-4 rounded-b-[18px] px-6 py-5 transition-colors hover:bg-white/[0.06]"
-            >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/15">
-                <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <span className="flex-1">
-                <span className="block font-bold">¿Ya usas Olive+?</span>
-                <span className="block text-white/75">Ingresa a la plataforma</span>
-              </span>
-              <ArrowUpRight className="h-5 w-5 text-white/70 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-            </a>
-          </li>
-        </ul>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-white/80">
+            <span>{CORREO_CONTACTO}</span>
+            <CopiarCorreo correo={CORREO_CONTACTO} />
+            <span aria-hidden="true" className="text-white/40">·</span>
+            <span>+56 9 3372 0947</span>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {/* Qué pasa después */}
+          <div className="rounded-[18px] border border-white/20 bg-white/[0.08] px-6 py-6 backdrop-blur-sm">
+            <p className="font-bold">Qué pasa después</p>
+            <ol className="mt-3 space-y-2.5 text-white/85">
+              <li className="flex gap-3">
+                <span aria-hidden="true" className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-marca-ambar text-sm font-extrabold text-marca-ink">1</span>
+                Te respondemos y conversamos sobre tu campo.
+              </li>
+              <li className="flex gap-3">
+                <span aria-hidden="true" className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-marca-ambar text-sm font-extrabold text-marca-ink">2</span>
+                Te mostramos Olive+ funcionando, con datos como los tuyos.
+              </li>
+              <li className="flex gap-3">
+                <span aria-hidden="true" className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-marca-ambar text-sm font-extrabold text-marca-ink">3</span>
+                Vemos juntos cómo conectar tus equipos.
+              </li>
+            </ol>
+          </div>
+
+          <a
+            href={APP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-4 rounded-[18px] border border-white/15 px-6 py-4 transition-colors hover:bg-white/[0.06]"
+          >
+            <span className="flex-1">
+              <span className="block font-bold">¿Ya usas Olive+?</span>
+              <span className="block text-white/75">Ingresa a la plataforma</span>
+            </span>
+            <ArrowUpRight className="h-5 w-5 text-white/70 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+          </a>
+        </div>
       </div>
     </section>
   )

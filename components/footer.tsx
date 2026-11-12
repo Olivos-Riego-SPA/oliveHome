@@ -25,13 +25,13 @@ const Footer = () => {
 
   return (
     <footer className="bg-primary text-white border-t border-white/10">
-      <div className="container mx-auto px-6 py-14">
+      <div className="mx-auto max-w-[1440px] px-6 py-14 sm:px-10 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Columna 1: Marca */}
           <div>
             <Image src={logo} alt="Olive+" className="mb-5 h-11 w-auto" />
             <p className="text-sm text-white/70 leading-relaxed mb-5">
-              Gestionamos el riego de tu campo con datos reales, tecnología y acompañamiento experto.
+              Te ayudamos a gestionar el riego de tu campo con datos reales, tecnología y acompañamiento experto.
             </p>
             <div className="flex gap-3">
               <a
@@ -150,7 +150,7 @@ const Footer = () => {
 
         {/* Barra inferior */}
         <div className="pt-6 border-t border-white/10 text-center">
-          <p className="text-xs text-white/60">
+          <p className="text-xs text-white/75">
             © {currentYear} Olive+. Todos los derechos reservados.
           </p>
         </div>

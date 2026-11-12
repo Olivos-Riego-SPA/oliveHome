@@ -1,7 +1,9 @@
 import Image from 'next/image'
 import { Wrench, GraduationCap, Headphones, Sprout } from 'lucide-react'
 import fotoCampo from '@/app/public/images/quehacemos1.webp'
+import mapaPresencia from '@/app/public/images/mapa-presencia.svg'
 import Ondas from './ondas'
+import Topografia from './topografia'
 
 // La cadena de servicios, en el orden en que el cliente la vive
 const CADENA = [
@@ -18,7 +20,7 @@ const CADENA = [
   {
     icono: Headphones,
     titulo: 'Soporte técnico continuo',
-    texto: 'Resolvemos dudas y problemas cuando los necesitas, no cuando nos desocupamos.',
+    texto: 'Resolvemos dudas y problemas cuando los necesitas, durante toda la temporada.',
   },
   {
     icono: Sprout,
@@ -41,6 +43,7 @@ const CIFRAS = [
 export default function SeccionEquipo() {
   return (
     <section id="nosotros" className="relative overflow-hidden bg-marca-p50 py-20 lg:py-28">
+      <Topografia className="text-marca-primario/[0.06]" />
       <Ondas tono="claro" className="-right-64 -top-56 h-[700px] w-[700px]" />
 
       <div className="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-16">
@@ -50,8 +53,8 @@ export default function SeccionEquipo() {
               Más que una plataforma, <b className="font-extrabold">un equipo</b>
             </h2>
             <p className="mt-5 max-w-[56ch] text-lg leading-relaxed text-marca-tinta">
-              No somos solo software. Somos parte de tu cadena de servicios: estamos en terreno desde la
-              instalación y te acompañamos toda la temporada.
+              Estamos en terreno desde la instalación y te acompañamos toda la temporada: somos parte de tu
+              cadena de servicios.
             </p>
           </div>
 
@@ -86,29 +89,38 @@ export default function SeccionEquipo() {
         {/* El respaldo */}
         <div className="relative mt-16 overflow-hidden rounded-[18px] text-white lg:mt-20">
           <Image src={fotoCampo} alt="" fill sizes="(min-width: 1440px) 1312px, 100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-[rgba(8,77,110,0.84)]" />
+          <div className="absolute inset-0 bg-[rgba(8,77,110,0.94)]" />
+          <Topografia className="text-white/[0.07]" />
           <Ondas className="-bottom-64 -right-40 h-[520px] w-[520px]" animada={false} />
 
-          <div className="relative grid gap-8 px-7 py-10 sm:px-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-16 lg:px-14 lg:py-12">
+          <div className="relative grid items-center gap-10 px-7 py-10 sm:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:gap-16 lg:px-14 lg:py-12">
             <div>
               <h3 className="text-2xl font-normal sm:text-3xl">
                 Un respaldo que <b className="font-extrabold">crece cada temporada</b>
               </h3>
               <p className="mt-2 text-white/80">En Chile, Argentina y Estados Unidos.</p>
+              <dl className="mt-9 grid grid-cols-3 gap-4 sm:gap-12">
+                {CIFRAS.map((c) => (
+                  <div key={c.etiqueta}>
+                    <dt className="sr-only">{c.etiqueta}</dt>
+                    <dd>
+                      <span className="block text-[1.55rem] font-extrabold leading-tight sm:text-5xl">
+                        <span className="text-marca-ambar">+</span>
+                        {c.valor.replace('+', '')}
+                      </span>
+                      <span aria-hidden="true" className="mt-1 block text-sm text-white/80 sm:text-base">
+                        {c.etiqueta}
+                      </span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </div>
-            <dl className="grid grid-cols-3 gap-4 sm:gap-12">
-              {CIFRAS.map((c) => (
-                <div key={c.etiqueta}>
-                  <dt className="sr-only">{c.etiqueta}</dt>
-                  <dd>
-                    <span className="block text-[1.55rem] font-extrabold leading-tight sm:text-5xl">{c.valor}</span>
-                    <span aria-hidden="true" className="mt-1 block text-sm text-white/80 sm:text-base">
-                      {c.etiqueta}
-                    </span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
+
+            {/* Dónde estamos: las Américas en puntos, con Chile, Argentina y EE. UU. marcados */}
+            <figure className="mx-auto w-[220px] sm:w-[260px] lg:w-full lg:max-w-[300px]">
+              <Image src={mapaPresencia} alt="Mapa de las Américas con Chile, Argentina y Estados Unidos marcados" className="h-auto w-full" />
+            </figure>
           </div>
         </div>
       </div>

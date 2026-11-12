@@ -28,17 +28,17 @@ related_targets: []
 
 THESIS: The platform first. The visitor sees Olive+ at work with real data from a real farm, before hearing about equipment. Equipment compatibility is proof inside each module, not the hero's headline. Rejects the generic SaaS hero, device sales, and a dark photo under a glass card. *(Revised 12/11/2026 after the user's review: the first version, "Conecta lo que ya tienes", read as selling technologies.)*
 
-OWN-WORLD: Olive+ brand. A primary #084D6E wave over a field photo with the 0.86 primary veil. Tone circles with concentric rings that expand slowly like a drop falling on water. A curved edge with a green #028C44 strip. Light sections on #EEF4F7 with light rings. Green pill CTA; yellow only on PRO. Official module icons as the visual vocabulary. Raleway at mixed weights. Real screenshots at 10 px radius with a bluish shadow. White floating data cards.
+OWN-WORLD: Olive+ brand. A primary #084D6E wave over a field photo with the 0.86 primary veil. Tone circles with concentric rings that expand slowly like a drop falling on water. A curved edge with a green #028C44 strip. Light sections on #EEF4F7 with light rings. Green pill CTA. Yellow #F2BC09 as a precise accent (the user rejected a yellow core in the waves): a marker underline on 3 headlines, the selected savings figure, active indicators, the + on the figures and the PRO pill. Never as a surface. Official module icons as the visual vocabulary. Raleway at mixed weights. Real screenshots at 10 px radius with a bluish shadow. White floating data cards.
 
 STORY:
-1. Hero: Tu campo completo, en un solo lugar.
-2. Module explorer: Riego, Suelo, Clima, Planta, Pozos, Indicadores, each with its benefit and compatible equipment, and the 3D field scene as its visual. Screenshots are kept for the hero and the guided demo, so they do not repeat (user decision, 12/11/2026).
-3. Quick guided demo of Olive+ (to be designed; built at /lab-demo and then integrated).
-4. Monitoreo + PRO.
-5. Productivity route with % savings.
-6. The team that supports you, plus figures (+258 / +678 / +30.000 ha, 3 countries).
-7. Tutorials.
-8. Contact (Escríbenos).
+1. Hero: Tu campo completo, en un solo lugar, with a proof strip (+258 empresas · +30.000 ha · 3 countries).
+2. Module explorer with the 3D field.
+3. Irrigation route (savings by strategy, water tubes).
+4. Guided demo (pending, at /lab-demo).
+5. PRO: the 4 verbs, with Monitoreo under Vigilar.
+6. The team that supports you, with the mission, the chain of services, the figures and the dot map.
+7. Centro de Extensión Digital.
+8. Contact: email and WhatsApp with equal weight, copy email, what happens next.
 
 The visitor understands what the platform does, believes it because they see real screens, and writes in, or goes into Olive+ if they are already a customer.
 

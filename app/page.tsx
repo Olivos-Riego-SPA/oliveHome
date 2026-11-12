@@ -11,19 +11,22 @@ import CentroExtension from '@/components/home/centro_extension';
 import Contacto from '@/components/home/contacto';
 
 // Home rediseñada. Orden acordado en .impeccable/surfaces/app-page-tsx.md:
-// hero → módulos → (demo guiada, pendiente) → PRO → ruta del riego → equipo → Centro de Extensión → contacto.
+// hero → módulos → ruta del riego → (demo guiada, pendiente) → PRO → equipo → Centro de Extensión → contacto.
 export default function Home() {
   return (
     <div className="home flex min-h-screen flex-col bg-white">
       <SiteHeader />
 
-      <HeroPlataforma />
-      <ExploradorModulos />
-      <SeccionPro />
-      <RutaRiego />
-      <SeccionEquipo />
-      <CentroExtension />
-      <Contacto />
+      <main id="contenido">
+        <HeroPlataforma />
+        <ExploradorModulos />
+        <RutaRiego />
+        {/* Demo guiada (pendiente, se arma en /lab-demo) */}
+        <SeccionPro />
+        <SeccionEquipo />
+        <CentroExtension />
+        <Contacto />
+      </main>
       <Footer />
 
       <div className="fixed bottom-3 right-3 z-50 h-14 w-14">

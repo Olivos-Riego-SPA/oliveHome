@@ -11,7 +11,8 @@ interface OndasProps {
 
 /**
  * Círculo de tono de la marca con anillos concéntricos: la onda que deja una gota al caer
- * en el agua. Decorativo (aria-hidden). La animación respeta prefers-reduced-motion.
+ * en el agua. Decorativo (aria-hidden).
+ * La animación respeta prefers-reduced-motion.
  */
 export default function Ondas({ className, tono = 'oscuro', animada = true }: OndasProps) {
   const anillo = tono === 'oscuro' ? 'border-white/[0.09]' : 'border-marca-p100'

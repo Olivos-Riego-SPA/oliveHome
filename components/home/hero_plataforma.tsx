@@ -13,6 +13,7 @@ import capPlanta from '@/app/public/images/plataforma/planta-mapa.png'
 import capPozo from '@/app/public/images/plataforma/pozo-resumen.png'
 import capIndicadores from '@/app/public/images/plataforma/indicadores-recorte.png'
 import Ondas from './ondas'
+import Resaltado from './resaltado'
 import { ICONOS_MODULO } from './modulos_datos'
 
 import { APP_URL } from './constantes'
@@ -152,7 +153,10 @@ export default function HeroPlataforma() {
           {/* Mensaje */}
           <div className="max-w-[640px] self-center">
             <h1 className="text-[2.6rem] font-normal leading-[1.05] tracking-[-0.015em] sm:text-6xl lg:text-[3.6rem] xl:text-[4.25rem]">
-              Tu campo completo, <b className="block font-extrabold">en un solo lugar</b>
+              Tu campo completo,{' '}
+              <b className="block font-extrabold">
+                en un solo <Resaltado>lugar</Resaltado>
+              </b>
             </h1>
             <p className="mt-6 max-w-[34rem] text-lg leading-relaxed text-white/85 sm:text-[19px]">
               <b className="font-bold text-white">Riega con datos, no con intuición.</b> Olive+ reúne riego,
@@ -161,7 +165,7 @@ export default function HeroPlataforma() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <a
                 href="#contacto"
-                className="inline-flex h-[52px] items-center rounded-full bg-marca-verde px-8 text-lg font-bold text-white shadow-[0_8px_24px_rgba(2,60,30,0.28)] transition-colors hover:bg-marca-verdeOscuro focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-marca-primario"
+                className="inline-flex h-[52px] items-center rounded-full bg-marca-verde px-8 text-[19px] font-bold text-white shadow-[0_8px_24px_rgba(2,60,30,0.28)] transition-colors hover:bg-marca-verdeOscuro focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-marca-primario"
               >
                 Escríbenos
               </a>
@@ -178,7 +182,7 @@ export default function HeroPlataforma() {
 
             {/* Los módulos: indican la pantalla a la vista y permiten elegirla */}
             <div
-              className="mt-12 flex flex-wrap gap-x-4 gap-y-4"
+              className="mt-12 hidden flex-wrap gap-x-4 gap-y-4 sm:flex"
               role="group"
               aria-label="Módulos de Olive+ en la pantalla"
               onMouseEnter={() => setPausado(true)}
@@ -267,8 +271,17 @@ export default function HeroPlataforma() {
         </svg>
       </div>
 
-      {/* Espacio para la pantalla que sale de la ola */}
-      <div className="h-10 lg:h-36" />
+      {/* Prueba: el respaldo, a la vista apenas termina el hero (la pantalla ocupa la derecha) */}
+      <div className="mx-auto max-w-[1440px] px-6 pb-8 pt-6 sm:px-10 lg:min-h-[9rem] lg:px-16 lg:pt-4">
+        <p className="flex flex-wrap items-baseline gap-x-6 gap-y-2 text-marca-tinta lg:max-w-[52%]">
+          <span><b className="text-2xl font-extrabold text-marca-primario [font-variant-numeric:lining-nums]">+258</b> empresas</span>
+          <span><b className="text-2xl font-extrabold text-marca-primario [font-variant-numeric:lining-nums]">+30.000</b> hectáreas</span>
+          <span className="flex items-center gap-2">
+            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-marca-ambar" />
+            Chile, Argentina y EE. UU.
+          </span>
+        </p>
+      </div>
     </section>
   )
 }
@@ -295,7 +308,7 @@ function DatoFlotante({
       <Image src={icono} alt="" className="h-10 w-10" />
       <div className="leading-tight">
         <p className="text-xs font-semibold text-marca-suave">{dato.etiqueta}</p>
-        <p className="text-xl font-extrabold text-marca-primario">{dato.valor}</p>
+        <p className="text-xl font-extrabold text-marca-primario [font-variant-numeric:lining-nums]">{dato.valor}</p>
         <p className="text-xs text-marca-suave">{dato.detalle}</p>
       </div>
     </div>

@@ -39,6 +39,12 @@ const SiteHeader: React.FC = () => {
 
   return (
     <>
+      <a
+        href="#contenido"
+        className="sr-only z-[60] rounded-full bg-white px-5 py-3 font-bold text-marca-primario focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        Saltar al contenido
+      </a>
       <header
         className={cn(
           'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-300',

@@ -144,6 +144,38 @@ body {
     animation: onda-pulso 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 }
+/* Agua de los tubos (ruta del riego): olas en la superficie y burbujas */
+@keyframes ola-izquierda {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes ola-derecha {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+@keyframes burbuja {
+  0% { bottom: 2%; opacity: 0; transform: translateX(0); }
+  15% { opacity: 1; }
+  50% { transform: translateX(3px); }
+  85% { opacity: 0.8; }
+  100% { bottom: 92%; opacity: 0; transform: translateX(-2px); }
+}
+.burbuja {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ola-frente {
+    animation: ola-izquierda 3.6s linear infinite;
+  }
+  .ola-atras {
+    animation: ola-derecha 5.2s linear infinite;
+  }
+  .burbuja {
+    animation-name: burbuja;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+    animation-iteration-count: infinite;
+  }
+}
 @keyframes monitoreo-avance {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }

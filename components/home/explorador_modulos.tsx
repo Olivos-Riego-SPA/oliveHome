@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import { useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { MODULOS_HOME } from './modulos_datos'
+import Topografia from './topografia'
 
 // La escena 3D (three.js) se descarga recién cuando la sección se acerca a la pantalla
 const EscenaModulos3D = dynamic(() => import('@/components/escena_modulos_3d'), {
@@ -87,6 +88,8 @@ export default function ExploradorModulos() {
       onBlurCapture={() => setPausado(false)}
     >
 
+      <Topografia className="text-marca-primario/[0.06]" />
+
       <div className="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-16">
         <div className="max-w-3xl">
           <h2 className="text-balance text-4xl font-normal leading-[1.1] tracking-[-0.01em] text-marca-primario sm:text-5xl">
@@ -132,7 +135,7 @@ export default function ExploradorModulos() {
                   <span
                     key={`avance-${activo}`}
                     aria-hidden="true"
-                    className="avance-pestana absolute inset-x-5 bottom-1.5 h-0.5 origin-left rounded-full bg-marca-verde"
+                    className="avance-pestana absolute inset-x-5 bottom-1.5 h-0.5 origin-left rounded-full bg-marca-ambar"
                     style={{ animationDuration: `${AVANCE_MS}ms` }}
                   />
                 )}
@@ -218,7 +221,7 @@ export default function ExploradorModulos() {
 
 function CargandoCampo() {
   return (
-    <div className="flex h-full items-center justify-center text-sm font-semibold text-marca-primario/70">
+    <div className="flex h-full items-center justify-center text-sm font-semibold text-marca-primario/85">
       Cargando tu campo en 3D…
     </div>
   )

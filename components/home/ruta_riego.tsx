@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Image, { type StaticImageData } from 'next/image'
 import { cn } from '@/lib/utils'
 import Ondas from './ondas'
+import Resaltado from './resaltado'
+import fotoAgua from '@/app/public/images/backPozo.webp'
 import { ICONOS_MODULO } from './modulos_datos'
 
 interface Estrategia {
@@ -51,7 +53,7 @@ const ESTRATEGIAS: Estrategia[] = [
     nombre: 'Umbral fisiológico',
     ahorro: 43,
     descripcion:
-      'Riegas cuando la planta lo pide: el potencial hídrico te avisa cuándo empieza el estrés, antes de que se note en el campo.',
+      'Riegas cuando la planta lo pide: el potencial hídrico te muestra cuándo empieza el estrés, antes de que se note en el campo.',
     modulos: [RIEGO, CLIMA, SUELO, PLANTA],
   },
   {
@@ -107,15 +109,20 @@ export default function RutaRiego() {
 
   return (
     <section id="ruta-riego" className="relative overflow-hidden bg-white py-20 lg:py-28">
+      {/* El agua de verdad: la superficie del tranque, muy clara bajo un velo celeste */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[78%]">
+        <Image src={fotoAgua} alt="" fill sizes="100vw" className="object-cover object-center" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(238,244,247,0.80)_0%,rgba(238,244,247,0.88)_55%,#FFFFFF_100%)]" />
+      </div>
       <Ondas tono="claro" className="-left-72 -top-72 h-[760px] w-[760px]" />
 
       <div className="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-16">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,480px)] lg:items-end lg:gap-16">
           <h2 className="text-balance text-4xl font-normal leading-[1.1] tracking-[-0.01em] text-marca-primario sm:text-5xl">
-            Riega con más precisión, <b className="font-extrabold">usa menos agua</b>
+            Riega con más precisión, <b className="font-extrabold">usa menos <Resaltado>agua</Resaltado></b>
           </h2>
           <p className="text-lg leading-relaxed text-marca-tinta">
-            Cada estrategia de riego necesita un poco más de información de tu campo, y a cambio ahorra más agua.
+            Mientras mejor usas la información de tu campo para decidir, más agua ahorras.
             Olive+ te acompaña en todas: empieza donde estás hoy y avanza un paso a la vez.
           </p>
         </div>
@@ -154,6 +161,13 @@ export default function RutaRiego() {
                 >
                   {x.ahorro === 0 ? '0 %' : `−${x.ahorro} %`}
                 </span>
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'mt-1 h-1 rounded-full bg-marca-ambar transition-[width,opacity] duration-300',
+                    sel ? 'w-10 opacity-100' : 'w-0 opacity-0',
+                  )}
+                />
                 <span className="mt-1 hidden text-xs font-semibold text-marca-suave sm:block">
                   {x.ahorro === 0 ? 'Punto de partida' : 'de agua'}
                 </span>
@@ -168,13 +182,23 @@ export default function RutaRiego() {
                   <span
                     className={cn(
                       'absolute inset-x-0 bottom-0 block transition-[height,background-color] duration-[1400ms] ease-[cubic-bezier(.2,.7,.2,1)] motion-reduce:transition-none',
-                      sel ? 'bg-marca-primario' : 'bg-marca-p300 group-hover:bg-marca-primario/80',
+                      sel
+                        ? 'bg-[linear-gradient(180deg,#2A7FA3_0%,#0E5E84_35%,#084D6E_70%,#063D58_100%)]'
+                        : 'bg-[linear-gradient(180deg,#A9C4D2_0%,#7FA6BA_45%,#6B97AD_100%)] group-hover:brightness-95',
                     )}
-                    style={{ height: visible ? `${agua}%` : '100%', transitionDelay: `${i * 120}ms` }}
+                    style={{ height: visible ? `${Math.min(agua, 92)}%` : '92%', transitionDelay: `${i * 120}ms` }}
                   >
-                    {/* Superficie del agua */}
-                    <span className={cn('absolute inset-x-0 top-0 block h-1.5', sel ? 'bg-marca-p300' : 'bg-marca-p100')} />
+                    {/* Superficie del agua: dos olas que se mueven en sentido contrario */}
+                    <OlaAgua
+                      frente={sel ? '#2A7FA3' : '#A9C4D2'}
+                      atras={sel ? '#6FB3CF' : '#DCE8EE'}
+                      desfase={i * 0.9}
+                    />
+                    {sel && <Burbujas />}
+                    {/* Brillo interior: profundidad del agua */}
+                    <span className="absolute inset-y-0 left-[18%] block w-[14%] bg-white/[0.07]" />
                   </span>
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-y-3 left-[14%] w-[9%] rounded-full bg-white/25" />
                   <span
                     className={cn(
                       'absolute inset-x-0 bottom-3 text-[11px] font-bold text-white/85 transition-opacity sm:text-xs',
@@ -232,5 +256,42 @@ export default function RutaRiego() {
         </div>
       </div>
     </section>
+  )
+}
+
+/** Superficie viva del agua: dos olas sinusoidales que se desplazan en sentido contrario */
+function OlaAgua({ frente, atras, desfase }: { frente: string; atras: string; desfase: number }) {
+  // Dos períodos por mitad: al desplazar el 50 % el dibujo se repite sin salto
+  const d = 'M0 9 Q12.5 2 25 9 T50 9 T75 9 T100 9 T125 9 T150 9 T175 9 T200 9 V16 H0 Z'
+  return (
+    <span aria-hidden="true" className="pointer-events-none absolute bottom-[calc(100%-2px)] left-0 block h-3 w-full overflow-hidden sm:h-3.5">
+      <svg viewBox="0 0 200 16" preserveAspectRatio="none" className="ola-atras absolute left-0 top-0 h-full w-[200%]" style={{ animationDelay: `-${desfase}s` }}>
+        <path d={d} fill={atras} />
+      </svg>
+      <svg viewBox="0 0 200 16" preserveAspectRatio="none" className="ola-frente absolute left-0 top-[3px] h-full w-[200%]" style={{ animationDelay: `-${desfase * 1.3}s` }}>
+        <path d={d} fill={frente} />
+      </svg>
+    </span>
+  )
+}
+
+/** Unas pocas burbujas que suben en la estrategia elegida */
+function Burbujas() {
+  const burbujas = [
+    { left: '30%', size: 5, delay: 0, dur: 4.2 },
+    { left: '58%', size: 4, delay: 1.4, dur: 3.6 },
+    { left: '44%', size: 3, delay: 2.6, dur: 4.8 },
+    { left: '70%', size: 3, delay: 3.3, dur: 3.9 },
+  ]
+  return (
+    <span aria-hidden="true" className="pointer-events-none absolute inset-0 block overflow-hidden">
+      {burbujas.map((b, k) => (
+        <span
+          key={k}
+          className="burbuja absolute bottom-0 block rounded-full border border-white/50 bg-white/15"
+          style={{ left: b.left, width: b.size, height: b.size, animationDelay: `${b.delay}s`, animationDuration: `${b.dur}s` }}
+        />
+      ))}
+    </span>
   )
 }

@@ -10,7 +10,9 @@ import capCompararGraficos from '@/app/public/images/plataforma/riego-graficos-c
 import capPronostico from '@/app/public/images/plataforma/clima-pronostico.png'
 import capPronosticoDetalle from '@/app/public/images/plataforma/clima-pronostico-detalle-recorte.png'
 import capMonitoreo from '@/app/public/images/plataforma/monitoreo.png'
+import fondoSatelital from '@/app/public/images/pro-fondo-satelital.webp'
 import Ondas from './ondas'
+import Topografia from './topografia'
 import { ICONOS_MODULO } from './modulos_datos'
 
 type IdVerbo = 'entender' | 'comparar' | 'anticipar' | 'vigilar'
@@ -101,9 +103,22 @@ export default function SeccionPro() {
       {/* Borde superior curvo: el celeste del explorador entra en la sección */}
       <svg aria-hidden="true" viewBox="0 0 1440 120" preserveAspectRatio="none" className="relative block h-12 w-full lg:h-24">
         <path d="M0 0H1440V60C1180 96 900 108 640 96C380 84 170 64 0 70Z" fill="#028C44" transform="translate(0 6)" />
-        <path d="M0 0H1440V60C1180 96 900 108 640 96C380 84 170 64 0 70Z" fill="#EEF4F7" />
+        <path d="M0 0H1440V60C1180 96 900 108 640 96C380 84 170 64 0 70Z" fill="#FFFFFF" />
       </svg>
 
+      {/* Materia bajo el color: el campo real visto desde el satélite, teñido con el azul de marca */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 top-12 lg:top-24">
+        <Image
+          src={fondoSatelital}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover opacity-[0.22] mix-blend-luminosity"
+        />
+        {/* Se desvanece hacia abajo para que el texto y las capturas respiren */}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,61,88,0)_0%,rgba(6,61,88,0.55)_45%,#063D58_85%)]" />
+      </div>
+      <Topografia className="text-white/[0.06]" />
       <Ondas className="-right-72 top-24 h-[900px] w-[900px]" />
       <Ondas className="-left-64 bottom-[-260px] h-[620px] w-[620px]" animada={false} />
 
@@ -114,7 +129,7 @@ export default function SeccionPro() {
             Con <SelloPro className="mx-1 translate-y-[-0.12em] align-middle" /> decides mejor.
           </span>
         </h2>
-        <p className="mt-6 max-w-[60ch] text-lg leading-relaxed text-white/80">
+        <p className="mt-6 max-w-[60ch] text-pretty text-lg leading-relaxed text-white/80">
           Con Base tienes el dato. PRO va más allá: te ayuda a <b className="text-white">entender</b>,{' '}
           <b className="text-white">comparar</b>, <b className="text-white">anticipar</b> y{' '}
           <b className="text-white">vigilar</b> lo que pasa en tu campo.
@@ -146,7 +161,7 @@ export default function SeccionPro() {
                 <span
                   className={cn(
                     'block text-[1.9rem] font-extrabold leading-none tracking-[-0.01em] transition-colors duration-200 sm:text-[2.6rem]',
-                    sel ? 'text-white' : 'text-white/40 group-hover:text-white/70',
+                    sel ? 'text-white' : 'text-white/55 group-hover:text-white/80',
                   )}
                 >
                   {x.verbo}
@@ -154,7 +169,7 @@ export default function SeccionPro() {
                 <span
                   className={cn(
                     'mt-2 block text-[15px] font-semibold transition-colors duration-200',
-                    sel ? 'text-white/85' : 'text-white/45 group-hover:text-white/65',
+                    sel ? 'text-white/85' : 'text-white/70 group-hover:text-white/85',
                   )}
                 >
                   {x.pregunta}
@@ -162,7 +177,7 @@ export default function SeccionPro() {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    'absolute inset-x-0 -bottom-px h-[3px] origin-left rounded-full bg-marca-verde transition-transform duration-300 ease-[cubic-bezier(.2,.7,.2,1)]',
+                    'absolute inset-x-0 -bottom-px h-[3px] origin-left rounded-full bg-marca-ambar transition-transform duration-300 ease-[cubic-bezier(.2,.7,.2,1)]',
                     sel ? 'scale-x-100' : 'scale-x-0',
                   )}
                 />
@@ -184,7 +199,7 @@ export default function SeccionPro() {
               <div
                 key={x.id}
                 aria-hidden={x.id !== v.id}
-                className={cn('[grid-area:1/1]', x.id === v.id ? 'tarjeta-entra' : 'invisible')}
+                className={cn('lg:[grid-area:1/1]', x.id === v.id ? 'tarjeta-entra' : 'hidden lg:block lg:invisible')}
               >
                 <TextoVerbo verbo={x} />
               </div>
@@ -212,6 +227,11 @@ export default function SeccionPro() {
           </a>
         </div>
       </div>
+
+      {/* Salida curva hacia la sección del equipo (celeste) */}
+      <svg aria-hidden="true" viewBox="0 0 1440 120" preserveAspectRatio="none" className="relative -mt-6 block h-12 w-full lg:-mt-10 lg:h-24">
+        <path d="M0 120V64C260 34 560 18 820 30C1080 42 1280 74 1440 56V120Z" fill="#EEF4F7" />
+      </svg>
     </section>
   )
 }

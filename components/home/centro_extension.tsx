@@ -2,6 +2,7 @@ import Image, { type StaticImageData } from 'next/image'
 import { ArrowRight, Play } from 'lucide-react'
 import paisaje from '@/app/public/images/centro-extension-paisaje.webp'
 import { ICONOS_MODULO } from './modulos_datos'
+import Topografia from './topografia'
 
 interface Video {
   youtubeId: string
@@ -25,7 +26,7 @@ export default function CentroExtension() {
   return (
     <section
       id="centro-extension"
-      className="relative overflow-hidden bg-[linear-gradient(180deg,#EEF4F7_0%,#E5EDF0_40%)] pb-80 pt-20 sm:pb-96 lg:pb-[31rem] lg:pt-28"
+      className="relative overflow-hidden bg-[linear-gradient(180deg,#EEF4F7_0%,#E5EDF0_40%)] pb-80 pt-6 sm:pb-96 lg:pb-[31rem] lg:pt-10"
     >
       {/* El paisaje: su cielo continúa el celeste de la sección de arriba; abajo, cerros y viñedo */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[420px] sm:h-[520px] lg:h-[640px]">
@@ -38,6 +39,10 @@ export default function CentroExtension() {
         />
         {/* Funde el borde superior de la foto con el cielo de la sección */}
         <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-[#E5EDF0] to-transparent" />
+      </div>
+
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[60%] [mask-image:linear-gradient(180deg,#000_40%,transparent)]">
+        <Topografia className="text-marca-primario/[0.06]" />
       </div>
 
       <div className="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-16">
