@@ -24,6 +24,8 @@ type Props = {
   mostrarAviso?: boolean
   /** Clic sobre un dispositivo en la escena */
   onSeleccionModulo?: (id: ModuloId) => void
+  /** Detiene el render cuando la escena no está a la vista */
+  pausada?: boolean
 }
 
 /**
@@ -35,6 +37,7 @@ export default function EscenaModulos3D({
   voxels = false,
   mostrarAviso = true,
   onSeleccionModulo,
+  pausada = false,
 }: Props) {
   const [reducedMotion, setReducedMotion] = useState(false)
 
@@ -58,6 +61,7 @@ export default function EscenaModulos3D({
       voxels={voxels}
       mostrarAviso={mostrarAviso}
       onSeleccionModulo={(i) => onSeleccionModulo?.(MODULOS[i].id)}
+      pausada={pausada}
     />
   )
 }

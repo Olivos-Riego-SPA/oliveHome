@@ -1,151 +1,117 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { usePathname } from 'next/navigation'
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import logo from './../app/public/images/logo.png'
+import { Menu, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import logo from './../app/public/images/logo-oliveplus-negativo.svg'
 
-interface SiteHeaderProps {
-  onScrollToModulos?: () => void
-  onScrollToContacto?: () => void
-}
+const ENLACES = [
+  { href: '/#modulos', texto: 'Módulos' },
+  { href: '/#pro', texto: 'PRO' },
+  { href: '/#nosotros', texto: 'Nosotros' },
+  { href: '/tutoriales', texto: 'Tutoriales' },
+]
 
-const SiteHeader: React.FC<SiteHeaderProps> = ({
-  onScrollToModulos,
-  onScrollToContacto,
-}) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+const APP_URL = 'https://www.oliveplus.cl'
+
+/**
+ * Cabecera fija. Transparente sobre la ola del hero; al hacer scroll toma el primario de marca.
+ * "Ingresar a Olive+" es un enlace de texto: es para clientes, la acción de la home es escribirnos.
+ */
+const SiteHeader: React.FC = () => {
+  const [abierto, setAbierto] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const pathname = usePathname()
-
-  // En el home, "Inicio" vuelve al tope sin recargar; en otras páginas navega a /
-  const irAlInicio = () => {
-    if (pathname === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      window.location.href = '/'
-    }
-    setIsMenuOpen(false)
-  }
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const handleInternalNav = (action: (() => void) | undefined, fallback?: string) => {
-    if (action) {
-      action()
-    } else if (fallback) {
-      window.location.href = fallback
-    }
-    setIsMenuOpen(false)
-  }
+  useEffect(() => {
+    if (!abierto) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setAbierto(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [abierto])
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? 'bg-primary shadow-md'
-            : 'bg-transparent backdrop-blur-sm'
-        }`}
+        className={cn(
+          'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-300',
+          scrolled || abierto ? 'bg-marca-primario shadow-[0_4px_16px_rgba(6,47,92,0.22)]' : 'bg-transparent',
+        )}
       >
-        <div className="container mx-auto px-6">
-          <div className="flex justify-between items-center py-4">
-            <a href="/" aria-label="Ir al inicio">
-              <Image src={logo.src} priority alt="Olive+" width={130} height={80} />
-            </a>
-            <nav className="hidden md:flex items-center gap-1" aria-label="Navegación principal">
-              <Button className="text-white" variant="ghost" onClick={irAlInicio}>
-                Inicio
-              </Button>
-              <Button
-                className="text-white"
-                variant="ghost"
-                onClick={() => handleInternalNav(onScrollToModulos, '/#modulos')}
+        <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-6 sm:px-10 lg:h-20 lg:px-16">
+          <a href="/" aria-label="Olive+, ir al inicio" className="rounded-md">
+            <Image src={logo} alt="Olive+" priority className="h-9 w-auto lg:h-11" />
+          </a>
+
+          <nav className="hidden items-center gap-9 md:flex" aria-label="Navegación principal">
+            {ENLACES.map((e) => (
+              <a
+                key={e.href}
+                href={e.href}
+                className="text-[15px] font-semibold text-white/90 transition-colors hover:text-white"
               >
-                Módulos
-              </Button>
-              <Button
-                className="text-white"
-                variant="ghost"
-                onClick={() => handleInternalNav(onScrollToContacto, '/#nosotrosSection')}
-              >
-                Nosotros
-              </Button>
-              <Button asChild className="text-white" variant="ghost">
-                <a href="/tutoriales">Tutoriales</a>
-              </Button>
-              <Button
-                asChild
-                className="text-white bg-clear border-clear hover:bg-clear/90"
-                variant="outline"
-              >
-                <a href="https://www.oliveplus.cl" target="_blank" rel="noopener noreferrer">
-                  Ingresar a Olive+
-                </a>
-              </Button>
-            </nav>
-            <Button
-              variant="outline"
-              className="md:hidden text-white border-white/40"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Abrir menú"
-              aria-expanded={isMenuOpen}
+                {e.texto}
+              </a>
+            ))}
+            <span className="h-5 w-px bg-white/25" aria-hidden="true" />
+            <a
+              href={APP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[15px] font-bold text-white underline decoration-white/40 underline-offset-[6px] transition-colors hover:decoration-white"
             >
-              Menú
-            </Button>
-          </div>
+              Ingresar a Olive+
+            </a>
+          </nav>
+
+          <button
+            type="button"
+            className="inline-flex h-11 items-center gap-2 rounded-full border border-white/40 px-4 text-[15px] font-semibold text-white transition-colors hover:bg-white/10 md:hidden"
+            onClick={() => setAbierto(!abierto)}
+            aria-label={abierto ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={abierto}
+            aria-controls="menu-movil"
+          >
+            {abierto ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+            Menú
+          </button>
         </div>
       </header>
 
-      {isMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          <div
-            className="bg-primary p-4 mt-16 flex flex-col gap-1"
+      {abierto && (
+        <div className="fixed inset-0 z-40 bg-marca-ink/50 md:hidden" onClick={() => setAbierto(false)}>
+          <nav
+            id="menu-movil"
+            aria-label="Navegación principal"
+            className="mt-[72px] flex flex-col gap-1 bg-marca-primario px-6 pb-6 pt-2"
             onClick={(e) => e.stopPropagation()}
           >
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-white hover:text-white/80"
-              onClick={irAlInicio}
-            >
-              Inicio
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-white hover:text-white/80"
-              onClick={() => handleInternalNav(onScrollToModulos, '/#modulos')}
-            >
-              Módulos
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-white hover:text-white/80"
-              onClick={() => handleInternalNav(onScrollToContacto, '/#nosotrosSection')}
-            >
-              Nosotros
-            </Button>
-            <Button asChild variant="ghost" className="w-full justify-start text-white hover:text-white/80">
-              <a href="/tutoriales" onClick={() => setIsMenuOpen(false)}>
-                Tutoriales
+            {ENLACES.map((e) => (
+              <a
+                key={e.href}
+                href={e.href}
+                onClick={() => setAbierto(false)}
+                className="rounded-lg px-2 py-3 text-lg font-semibold text-white hover:bg-white/10"
+              >
+                {e.texto}
               </a>
-            </Button>
-            <Button
-              asChild
-              className="w-full justify-start bg-clear text-white hover:bg-clear/90 mt-2"
+            ))}
+            <a
+              href={APP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 rounded-lg px-2 py-3 text-lg font-bold text-white underline decoration-white/40 underline-offset-[6px]"
             >
-              <a href="https://www.oliveplus.cl" target="_blank" rel="noopener noreferrer">
-                Ingresar a Olive+
-              </a>
-            </Button>
-          </div>
+              Ingresar a Olive+
+            </a>
+          </nav>
         </div>
       )}
     </>

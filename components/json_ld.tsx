@@ -24,12 +24,13 @@ export const organizationSchema = {
   logo: `${siteUrl}/images/logo.png`,
   description:
     'Plataforma para gestionar el riego de tu campo con datos reales, tecnología y acompañamiento experto.',
-  email: 'ventas@olivos.cl',
+  email: 'tecnologias@olivos.cl',
   telephone: '+56933720947',
-  areaServed: {
-    '@type': 'Country',
-    name: 'Chile',
-  },
+  areaServed: [
+    { '@type': 'Country', name: 'Chile' },
+    { '@type': 'Country', name: 'Argentina' },
+    { '@type': 'Country', name: 'United States' },
+  ],
   sameAs: [
     'https://www.linkedin.com/company/olivosriego/',
     'https://www.instagram.com/olivosriego/',
@@ -38,10 +39,10 @@ export const organizationSchema = {
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+56933720947',
-    email: 'ventas@olivos.cl',
+    email: 'tecnologias@olivos.cl',
     contactType: 'sales',
-    availableLanguage: ['Spanish'],
-    areaServed: 'CL',
+    availableLanguage: ['Spanish', 'English'],
+    areaServed: ['CL', 'AR', 'US'],
   },
 }
 
@@ -56,20 +57,20 @@ export const softwareAppSchema = {
   url: appUrl,
   description:
     'Plataforma integral para monitorear, planificar y decidir el riego de tu campo con datos reales de planta, suelo, clima y pozo.',
-  offers: {
-    '@type': 'Offer',
-    priceCurrency: 'CLP',
-    price: '0',
-    availability: 'https://schema.org/InStock',
-  },
+  // Sin bloque `offers`: no se publican precios (un price '0' se lee como "gratis")
+  inLanguage: ['es', 'en'],
   publisher: { '@id': `${siteUrl}/#organization` },
   featureList: [
-    'Monitoreo de riego por sector',
-    'Gestión de pozos y cumplimiento DGA',
-    'Humedad de suelo en tiempo real',
-    'Variables climáticas',
-    'Sensores en planta',
-    'Análisis de datos agregado',
+    'Desempeño de riego y fertirriego por equipo y sector',
+    'Mapa satelital de sectores pintados por desempeño',
+    'Balance hídrico con riego, lluvia y ETo/ETc',
+    'Humedad, temperatura y salinidad del suelo por profundidad',
+    'Potencial hídrico de la planta, con sensores o lecturas Scholander',
+    'ETc, horas frío y días grado desde la estación del campo',
+    'Caudal, nivel freático y volumen de pozos, con envío a la DGA',
+    'Tableros de indicadores propios por campo',
+    'Sala de control multi-campo para televisor (Monitoreo)',
+    'Exportación a Excel y PDF, en español e inglés',
   ],
 }
 

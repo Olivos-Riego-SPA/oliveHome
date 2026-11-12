@@ -5,13 +5,13 @@ import iconPozo from '@/app/public/images/iconfuente.png'
 import iconSuelo from '@/app/public/images/iconsuelo.png'
 import iconPlanta from '@/app/public/images/iconplanta.png'
 import iconClima from '@/app/public/images/iconclima.png'
-import iconAnalisis from '@/app/public/images/dataanalitics.png'
+import iconIndicadores from '@/app/public/images/iconindicadores.png'
 
 export const MODULOS = [
   {
     id: 'riego',
     nombre: 'Riego',
-    descripcion: 'Controla y monitorea el riego del campo en tiempo real.',
+    descripcion: 'El desempeño de cada equipo y sector, con riego y fertirriego.',
     icono: iconRiego.src,
     dispositivo: 'Datos desde controladores TALGIL, modelos SAPIR y DREAM.',
   },
@@ -20,7 +20,7 @@ export const MODULOS = [
     nombre: 'Pozo',
     descripcion: 'Nivel y caudal del pozo: el agua disponible para regar.',
     icono: iconPozo.src,
-    dispositivo: 'Monitoreo de nivel y caudal, con reporte automático a la DGA.',
+    dispositivo: 'Caudal, nivel y volumen desde tu Talgil, con envío de mediciones a la DGA.',
   },
   {
     id: 'suelo',
@@ -34,22 +34,22 @@ export const MODULOS = [
     nombre: 'Planta',
     descripcion: 'Seguimiento del estado hídrico directamente en la planta.',
     icono: iconPlanta.src,
-    dispositivo: 'Medición directa en la planta con sensores FLORAPULSE.',
+    dispositivo: 'Sensores FLORAPULSE o lecturas manuales con bomba Scholander.',
   },
   {
     id: 'clima',
     nombre: 'Clima',
-    descripcion: 'Estación meteorológica: viento, lluvia y temperatura.',
+    descripcion: 'Estación meteorológica: el clima del campo y la ETc de tu cultivo.',
     icono: iconClima.src,
-    dispositivo: 'Información de estaciones meteorológicas DAVIS o PESSL.',
+    dispositivo: 'Estaciones DAVIS o PESSL, incluso combinadas en una sola.',
   },
   {
+    // El id se mantiene como 'analisis' porque la escena 3D mapea por id (nube central)
     id: 'analisis',
-    nombre: 'Análisis de datos',
-    descripcion:
-      'Todo el campo se acopla en Olive: paneles personalizados para decidir con datos.',
-    icono: iconAnalisis.src,
-    dispositivo: 'Toda la información de tu campo, consolidada en OLIVE+.',
+    nombre: 'Indicadores',
+    descripcion: 'Tu tablero, a tu manera: lo que más te importa de cada campo.',
+    icono: iconIndicadores.src,
+    dispositivo: 'Gráficos, mapas e indicadores de todos los módulos en un solo tablero.',
   },
 ] as const
 

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { PlayCircle, ArrowRight, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import fondotuto from './../app/public/images/fondotuto.jpg'
+import fondotuto from './../app/public/images/fondotuto.webp'
 
 interface FeaturedVideo {
   youtubeId: string
@@ -35,7 +35,7 @@ const TutorialesTeaser = () => {
     <section id="tutorialesGuias" className="relative py-20 overflow-hidden">
       {/* Fondo con overlay */}
       <div className="absolute inset-0 z-0">
-        <Image src={fondotuto.src} alt="" fill style={{ objectFit: 'cover' }} />
+        <Image src={fondotuto.src} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
         <div className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/80 to-black/90" />
       </div>
 

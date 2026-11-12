@@ -5,7 +5,7 @@ import { JsonLd, organizationSchema, softwareAppSchema, websiteSchema } from '@/
 
 const raleway = Raleway({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 const siteUrl = 'https://home.oliveplus.cl'

@@ -89,6 +89,8 @@ type PropsEscena = {
    *  contexto ya muestra nombre y descripción del módulo (ej. la sección de la home). */
   mostrarAviso?: boolean
   onSeleccionModulo?: (indice: number) => void
+  /** Detiene el loop de render (p. ej. cuando la escena está fuera de la vista) */
+  pausada?: boolean
 }
 
 /* ---------- Terreno: malla low poly facetada, o grilla de voxels ---------- */
@@ -781,6 +783,7 @@ export default function EscenaBloque({
   voxels,
   mostrarAviso = true,
   onSeleccionModulo,
+  pausada = false,
 }: PropsEscena) {
   // En el mismo orden que MODULOS y DISPOSICION
   const dispositivos = [
@@ -795,6 +798,7 @@ export default function EscenaBloque({
   return (
     <Canvas
       orthographic
+      frameloop={pausada ? 'never' : 'always'}
       // "percentage" = PCFShadowMap: es lo que three usa igualmente al degradar el
       // PCFSoft deprecado, pero declararlo evita el warning en cada frame
       shadows="percentage"

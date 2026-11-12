@@ -11,7 +11,6 @@ export interface ModuleItem {
   shortLabel: string
   description: string
   iconSrc: string
-  previewSrc: string
   backgroundSrc: string
 }
 
@@ -59,7 +58,7 @@ const ModulesTabs: React.FC<ModulesTabsProps> = ({ modules, autoplayMs = 6000 })
             transition={{ duration: 1.2, ease: 'easeInOut' }}
             className="absolute inset-0"
           >
-            <Image src={active.backgroundSrc} alt="" fill style={{ objectFit: 'cover' }} priority />
+            <Image src={active.backgroundSrc} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
             <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/75 to-black/60" />
           </motion.div>
         </AnimatePresence>

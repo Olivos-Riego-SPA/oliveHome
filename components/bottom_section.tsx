@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Cpu, Building, Wrench, Headphones, Sprout, GraduationCap } from "lucide-react";
+import { Cpu, Building, Map, Wrench, Headphones, Sprout, GraduationCap } from "lucide-react";
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
@@ -30,10 +30,17 @@ const accompaniment = [
   },
 ]
 
+// Cifras oficiales: OlivePlus/marketing/presentacion-comercial.md (§2, 11-11-2026)
+const STATS = [
+  { icon: Building, label: 'Empresas', value: 258 },
+  { icon: Cpu, label: 'Dispositivos', value: 678 },
+  { icon: Map, label: 'Hectáreas', value: 30000 },
+]
+
+const formatCL = (n: number) => n.toLocaleString('es-CL')
+
 const BottomSection: React.FC = () => {
-  const [clientesCount, setClientesCount] = useState(0);
-  const [dispositivosCount, setDispositivosCount] = useState(0);
-  const [usuariosCount, setUsuariosCount] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [isStatsVisible, setIsStatsVisible] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
 
@@ -61,13 +68,24 @@ const BottomSection: React.FC = () => {
   useEffect(() => {
     if (!isStatsVisible) return;
 
-    const interval = setInterval(() => {
-      setClientesCount(prev => prev < 264 ? prev + 1 : 264);
-      setDispositivosCount(prev => prev < 692 ? prev + 1 : 692);
-      setUsuariosCount(prev => prev < 682 ? prev + 1 : 682);
-    }, 5);
+    // Con reduced-motion se muestran las cifras finales sin animar
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setProgress(1);
+      return;
+    }
 
-    return () => clearInterval(interval);
+    // Conteo de ~1,4 s con desaceleración final (todas las cifras llegan juntas)
+    const duration = 1400;
+    const start = performance.now();
+    let frame: number;
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      setProgress(1 - Math.pow(1 - t, 3));
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+
+    return () => cancelAnimationFrame(frame);
   }, [isStatsVisible]);
 
   const fadeInVariants = {
@@ -101,40 +119,28 @@ const BottomSection: React.FC = () => {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Card className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-lg text-white">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-center text-base md:text-lg font-medium text-white/80">
-                  <Building className="mr-2 w-5 h-5" />
-                  Clientes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-5xl font-bold text-center text-white">{clientesCount}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-lg text-white">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-center text-base md:text-lg font-medium text-white/80">
-                  <Cpu className="mr-2 w-5 h-5" />
-                  Dispositivos
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-5xl font-bold text-center text-white">{dispositivosCount}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-lg text-white">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-center text-base md:text-lg font-medium text-white/80">
-                  <Users className="mr-2 w-5 h-5" />
-                  Usuarios
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-5xl font-bold text-center text-white">{usuariosCount}</p>
-              </CardContent>
-            </Card>
+            {STATS.map(({ icon: Icon, label, value }) => (
+              <Card key={label} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-lg text-white">
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center justify-center text-base md:text-lg font-medium text-white/80">
+                    <Icon className="mr-2 w-5 h-5" aria-hidden="true" />
+                    {label}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p
+                    className="text-5xl font-bold text-center text-white"
+                    aria-label={`Más de ${formatCL(value)} ${label.toLowerCase()}`}
+                  >
+                    +{formatCL(Math.round(value * progress))}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+          <p className="mt-6 text-center text-sm text-white/70">
+            En Chile, Argentina y Estados Unidos.
+          </p>
         </div>
 
         {/* Nuestro equipo te acompaña */}

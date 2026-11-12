@@ -81,6 +81,109 @@ body {
   }
 }
 
+/* ── Home rediseñada (marca Olive+) ─────────────────────────────────────────
+   Movimiento de marca: cubic-bezier(.2,.7,.2,1), fades y desplazamientos, sin rebotes.
+   Todo respeta prefers-reduced-motion: sin animación, el contenido queda visible. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.home) {
+    scroll-behavior: smooth;
+  }
+}
+.home [id] {
+  scroll-margin-top: 80px;
+}
+.home ::selection {
+  background: #dce8ee;
+  color: #063d58;
+}
+.home :focus-visible {
+  outline: 2px solid #028c44;
+  outline-offset: 3px;
+}
+
+.cable-dibujo {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.nodo-encendido {
+  opacity: 1;
+}
+@keyframes cable-dibujo {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes nodo-encendido {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pantalla-entra {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes onda-expande {
+  0% { transform: scale(1); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: scale(2.65); opacity: 0; }
+}
+@keyframes tarjeta-entra {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.onda-expande {
+  opacity: 0;
+}
+@keyframes onda-pulso {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(2.9); opacity: 0; }
+}
+.onda-pulso {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .onda-pulso {
+    animation: onda-pulso 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+@keyframes monitoreo-avance {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.monitoreo-avance {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .monitoreo-avance {
+    display: block;
+    animation: monitoreo-avance 8s linear infinite;
+  }
+}
+@keyframes avance-pestana {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.avance-pestana {
+  animation: avance-pestana linear both;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .onda-expande {
+    animation: onda-expande 7.8s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+  }
+  .tarjeta-entra {
+    animation: tarjeta-entra 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .cable-dibujo {
+    animation: cable-dibujo 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .nodo-encendido {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: nodo-encendido 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) 1.2s both;
+  }
+  .hero-pantalla {
+    animation: pantalla-entra 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

@@ -37,6 +37,22 @@ const config: Config = {
 		  
 		  
   		colors: {
+			// Sistema de marca Olive+ (OliveMarketing/marcas/oliveplus/tokens.css). Usar en el rediseño de la home.
+			marca: {
+				primario: '#084D6E',
+				p700: '#063D58',
+				p300: '#6B97AD',
+				p100: '#DCE8EE',
+				p50: '#EEF4F7',
+				verde: '#028C44',
+				verdeOscuro: '#02753A',
+				verde100: '#E7F3E9',
+				ambar: '#F2BC09',
+				tinta: '#3F4650',
+				suave: '#5F6773',
+				ink: '#16191D',
+				papel: '#F7F8FA',
+			},
 			backColor: '#f1f1f1',
 			ilback:'#fdb601',
 			primary: '#084d6e', // kPrimaryColor

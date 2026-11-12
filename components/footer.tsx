@@ -1,5 +1,3 @@
-'use client'
-
 import Image from 'next/image'
 import { Mail, Phone, MapPin } from 'lucide-react'
 
@@ -20,7 +18,7 @@ const YoutubeIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
   </svg>
 )
-import logo from './../app/public/images/logo.png'
+import logo from './../app/public/images/logo-oliveplus-negativo.svg'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -31,7 +29,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Columna 1: Marca */}
           <div>
-            <Image src={logo.src} alt="Olive+" width={140} height={80} className="mb-4" />
+            <Image src={logo} alt="Olive+" className="mb-5 h-11 w-auto" />
             <p className="text-sm text-white/70 leading-relaxed mb-5">
               Gestionamos el riego de tu campo con datos reales, tecnología y acompañamiento experto.
             </p>
@@ -73,12 +71,17 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2.5 text-sm text-white/70">
               <li>
-                <a href="#modulos" className="hover:text-white transition-colors">
+                <a href="/#modulos" className="hover:text-white transition-colors">
                   Módulos
                 </a>
               </li>
               <li>
-                <a href="#nosotrosSection" className="hover:text-white transition-colors">
+                <a href="/#pro" className="hover:text-white transition-colors">
+                  Olive+ PRO
+                </a>
+              </li>
+              <li>
+                <a href="/#nosotros" className="hover:text-white transition-colors">
                   Nosotros
                 </a>
               </li>
@@ -107,8 +110,8 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="/tutoriales" className="hover:text-white transition-colors">
-                  Guías de uso
+                <a href="/#centro-extension" className="hover:text-white transition-colors">
+                  Centro de Extensión Digital
                 </a>
               </li>
             </ul>
@@ -122,8 +125,8 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 mt-0.5 flex-shrink-0 text-clear" />
-                <a href="mailto:ventas@olivos.cl" className="hover:text-white transition-colors">
-                  ventas@olivos.cl
+                <a href="mailto:tecnologias@olivos.cl" className="hover:text-white transition-colors">
+                  tecnologias@olivos.cl
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
@@ -139,7 +142,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-clear" />
-                <span>Chile</span>
+                <span>Chile, Argentina y EE. UU.</span>
               </li>
             </ul>
           </div>

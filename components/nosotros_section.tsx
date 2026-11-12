@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Target, Droplets, Sprout, ChevronDown, Check } from 'lucide-react'
 import Estrategias from './estrategias'
-import quehacemos1 from './../app/public/images/quehacemos1.jpg'
+import quehacemos1 from './../app/public/images/quehacemos1.webp'
 import Image from 'next/image'
 
 type PillarId = 'mision' | 'estrategias' | 'plataforma'
@@ -64,7 +64,7 @@ const NosotrosSection = () => {
   return (
     <section id="nosotrosSection" className="relative py-20 overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image src={quehacemos1.src} alt="" fill style={{ objectFit: 'cover' }} />
+        <Image src={quehacemos1.src} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
         <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/85" />
       </div>
 
