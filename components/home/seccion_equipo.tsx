@@ -77,7 +77,7 @@ export default function SeccionEquipo() {
           <span aria-hidden="true" className="absolute left-7 right-7 top-7 hidden h-0.5 bg-marca-p100 lg:block" />
           {CADENA.map(({ icono: Icono, titulo, texto }) => (
             <li key={titulo} className="relative">
-              <span className="relative grid h-14 w-14 place-items-center rounded-full bg-marca-primario text-white shadow-[0_8px_20px_rgba(6,47,92,0.2)] ring-8 ring-marca-p50">
+              <span className="relative grid h-14 w-14 place-items-center rounded-full bg-marca-ambar text-white shadow-[0_8px_20px_rgba(150,110,0,0.25)] ring-8 ring-marca-p50">
                 <Icono className="h-6 w-6" aria-hidden="true" />
               </span>
               <h3 className="mt-5 text-xl font-extrabold text-marca-primario">{titulo}</h3>

@@ -149,7 +149,7 @@ export default function HeroPlataforma() {
           <Ondas className="-left-52 top-[52%] h-[460px] w-[460px]" />
         </div>
 
-        <div className="relative z-10 mx-auto grid max-w-[1440px] grid-cols-1 gap-y-12 px-6 pb-14 pt-28 sm:px-10 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:gap-x-14 lg:px-16 lg:pb-0 lg:pt-36 xl:grid-cols-[minmax(0,640px)_minmax(0,1fr)]">
+        <div className="relative z-10 mx-auto grid max-w-[1440px] grid-cols-1 gap-y-12 px-6 pb-20 pt-28 sm:px-10 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:gap-x-14 lg:px-16 lg:pb-14 lg:pt-36 xl:grid-cols-[minmax(0,640px)_minmax(0,1fr)]">
           {/* Mensaje */}
           <div className="max-w-[640px] self-center">
             <h1 className="text-[2.6rem] font-normal leading-[1.05] tracking-[-0.015em] sm:text-6xl lg:text-[3.6rem] xl:text-[4.25rem]">
@@ -271,17 +271,8 @@ export default function HeroPlataforma() {
         </svg>
       </div>
 
-      {/* Prueba: el respaldo, a la vista apenas termina el hero (la pantalla ocupa la derecha) */}
-      <div className="mx-auto max-w-[1440px] px-6 pb-8 pt-6 sm:px-10 lg:min-h-[9rem] lg:px-16 lg:pt-4">
-        <p className="flex flex-wrap items-baseline gap-x-6 gap-y-2 text-marca-tinta lg:max-w-[52%]">
-          <span><b className="text-2xl font-extrabold text-marca-primario [font-variant-numeric:lining-nums]">+258</b> empresas</span>
-          <span><b className="text-2xl font-extrabold text-marca-primario [font-variant-numeric:lining-nums]">+30.000</b> hectáreas</span>
-          <span className="flex items-center gap-2">
-            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-marca-ambar" />
-            Chile, Argentina y EE. UU.
-          </span>
-        </p>
-      </div>
+      {/* Espacio para la pantalla que sale de la ola */}
+      <div className="h-10 lg:h-28" />
     </section>
   )
 }

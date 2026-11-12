@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { ContactShadows, Html } from '@react-three/drei'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { MODULOS } from './escena_modulos_datos'
 
@@ -93,6 +93,55 @@ type PropsEscena = {
   pausada?: boolean
 }
 
+/* ---------- Instancias: piezas repetidas dibujadas en una sola llamada ---------- */
+
+type Instancia = {
+  p: [number, number, number]
+  s?: [number, number, number]
+  r?: [number, number, number]
+  c?: string
+}
+
+/**
+ * Dibuja muchas copias de la misma pieza en una sola llamada a la GPU (InstancedMesh).
+ * El color por copia se multiplica por el del material, que va en blanco.
+ */
+function Instanciado({
+  datos,
+  children,
+  castShadow,
+  receiveShadow,
+}: {
+  datos: Instancia[]
+  children: React.ReactNode
+  castShadow?: boolean
+  receiveShadow?: boolean
+}) {
+  const ref = useRef<THREE.InstancedMesh>(null)
+  useLayoutEffect(() => {
+    const malla = ref.current
+    if (!malla) return
+    const o = new THREE.Object3D()
+    const color = new THREE.Color()
+    datos.forEach((d, i) => {
+      o.position.set(...d.p)
+      o.scale.set(...(d.s ?? [1, 1, 1]))
+      o.rotation.set(...(d.r ?? [0, 0, 0]))
+      o.updateMatrix()
+      malla.setMatrixAt(i, o.matrix)
+      if (d.c) malla.setColorAt(i, color.set(d.c))
+    })
+    malla.instanceMatrix.needsUpdate = true
+    if (malla.instanceColor) malla.instanceColor.needsUpdate = true
+    malla.computeBoundingSphere()
+  }, [datos])
+  return (
+    <instancedMesh ref={ref} args={[undefined, undefined, datos.length]} castShadow={castShadow} receiveShadow={receiveShadow}>
+      {children}
+    </instancedMesh>
+  )
+}
+
 /* ---------- Terreno: malla low poly facetada, o grilla de voxels ---------- */
 
 function Terreno({ voxels }: { voxels: boolean }) {
@@ -146,21 +195,27 @@ function Terreno({ voxels }: { voxels: boolean }) {
     return geo
   }, [])
 
+  // Voxels: todas las capas de pasto en una instancia y todas las columnas de tierra en otra
+  const pastos = useMemo<Instancia[]>(
+    () => celdas.map((c) => ({ p: [c.x, c.t - 0.175, c.z], c: c.pasto })),
+    [celdas],
+  )
+  const tierras = useMemo<Instancia[]>(
+    () => celdas.map((c) => ({ p: [c.x, (c.t - 2.15) / 2, c.z], s: [1, c.t + 1.45, 1], c: c.tierra })),
+    [celdas],
+  )
+
   if (voxels) {
     return (
       <group>
-        {celdas.map((c) => (
-          <group key={`${c.x}:${c.z}`} position={[c.x, 0, c.z]}>
-            <mesh position={[0, c.t - 0.175, 0]} castShadow receiveShadow>
-              <boxGeometry args={[1, 0.35, 1]} />
-              <meshStandardMaterial color={c.pasto} />
-            </mesh>
-            <mesh position={[0, (c.t - 2.15) / 2, 0]}>
-              <boxGeometry args={[1, c.t + 1.45, 1]} />
-              <meshStandardMaterial color={c.tierra} />
-            </mesh>
-          </group>
-        ))}
+        <Instanciado datos={pastos} receiveShadow>
+          <boxGeometry args={[1, 0.35, 1]} />
+          <meshStandardMaterial color="#ffffff" />
+        </Instanciado>
+        <Instanciado datos={tierras}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="#ffffff" />
+        </Instanciado>
       </group>
     )
   }
@@ -215,8 +270,36 @@ function Vinedo() {
     return lista
   }, [])
 
+  // Troncos, copas y uvas de todas las hileras, cada grupo en una sola instancia
+  const { troncos, copas, uvas } = useMemo(() => {
+    const troncos: Instancia[] = []
+    const copas: Instancia[] = []
+    const uvas: Instancia[] = []
+    hileras.forEach((h) =>
+      h.vides.forEach((v) => {
+        // El tronco se entierra para asentarse en las facetas inclinadas
+        troncos.push({ p: [v.x, v.y + 0.08, h.z] })
+        copas.push({ p: [v.x, v.y + 0.4, h.z], s: [1.15 * v.radio, 0.8 * v.radio, 0.7 * v.radio], c: v.copa })
+        if (v.conUvas) uvas.push({ p: [v.x + 0.07, v.y + 0.26, h.z + 0.09] })
+      }),
+    )
+    return { troncos, copas, uvas }
+  }, [hileras])
+
   return (
     <group>
+      <Instanciado datos={troncos} castShadow>
+        <cylinderGeometry args={[0.03, 0.045, 0.4, 5]} />
+        <meshStandardMaterial color="#6e4a2b" flatShading />
+      </Instanciado>
+      <Instanciado datos={copas} castShadow>
+        <icosahedronGeometry args={[1, 0]} />
+        <meshStandardMaterial color="#ffffff" flatShading />
+      </Instanciado>
+      <Instanciado datos={uvas}>
+        <icosahedronGeometry args={[0.045, 0]} />
+        <meshStandardMaterial color={UVA} flatShading />
+      </Instanciado>
       {hileras.map((h) => (
         <group key={h.z}>
           {/* Postes de la espaldera */}
@@ -236,26 +319,6 @@ function Vinedo() {
             />
             <meshStandardMaterial color="#4a4a4a" />
           </mesh>
-          {/* Vides */}
-          {h.vides.map((v, k) => (
-            <group key={k} position={[v.x, v.y, h.z]}>
-              {/* El tronco se entierra para asentarse en las facetas inclinadas */}
-              <mesh position={[0, 0.08, 0]} castShadow>
-                <cylinderGeometry args={[0.03, 0.045, 0.4, 5]} />
-                <meshStandardMaterial color="#6e4a2b" flatShading />
-              </mesh>
-              <mesh position={[0, 0.4, 0]} scale={[1.15, 0.8, 0.7]} castShadow>
-                <icosahedronGeometry args={[v.radio, 0]} />
-                <meshStandardMaterial color={v.copa} flatShading />
-              </mesh>
-              {v.conUvas && (
-                <mesh position={[0.07, 0.26, 0.09]}>
-                  <icosahedronGeometry args={[0.045, 0]} />
-                  <meshStandardMaterial color={UVA} flatShading />
-                </mesh>
-              )}
-            </group>
-          ))}
         </group>
       ))}
     </group>
@@ -798,11 +861,11 @@ export default function EscenaBloque({
   return (
     <Canvas
       orthographic
-      frameloop={pausada ? 'never' : 'always'}
+      frameloop={pausada ? 'never' : 'demand'}
       // "percentage" = PCFShadowMap: es lo que three usa igualmente al degradar el
       // PCFSoft deprecado, pero declararlo evita el warning en cada frame
       shadows="percentage"
-      dpr={[1, 1.75]}
+      dpr={[1, 1.5]}
       camera={{ position: [10, 10, 10], zoom: 52, near: 0.1, far: 60 }}
       onCreated={({ camera }) => camera.lookAt(0, -0.4, 0)}
     >
@@ -912,7 +975,44 @@ export default function EscenaBloque({
         )}
       </BloqueRotatorio>
 
-      <ContactShadows position={[0, -2.0, 0]} opacity={0.35} scale={15} blur={2.4} far={4.5} />
+      <SombraSuave />
+      {!pausada && <LimitadorCuadros />}
     </Canvas>
   )
+}
+
+/* ---------- Rendimiento ---------- */
+
+/** Sombra difusa bajo el bloque: una textura radial fija en vez de recalcularla cada cuadro */
+function SombraSuave() {
+  const textura = useMemo(() => {
+    const lienzo = document.createElement('canvas')
+    lienzo.width = lienzo.height = 128
+    const ctx = lienzo.getContext('2d')
+    if (ctx) {
+      const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64)
+      g.addColorStop(0, 'rgba(6,40,60,0.42)')
+      g.addColorStop(0.55, 'rgba(6,40,60,0.16)')
+      g.addColorStop(1, 'rgba(6,40,60,0)')
+      ctx.fillStyle = g
+      ctx.fillRect(0, 0, 128, 128)
+    }
+    return new THREE.CanvasTexture(lienzo)
+  }, [])
+  return (
+    <mesh rotation-x={-Math.PI / 2} position={[0, -2.0, 0]}>
+      <planeGeometry args={[13, 13]} />
+      <meshBasicMaterial map={textura} transparent depthWrite={false} />
+    </mesh>
+  )
+}
+
+/** Pide un cuadro nuevo 30 veces por segundo (las animaciones usan el tiempo, no los cuadros) */
+function LimitadorCuadros() {
+  const invalidate = useThree((s) => s.invalidate)
+  useEffect(() => {
+    const id = window.setInterval(() => invalidate(), 1000 / 30)
+    return () => window.clearInterval(id)
+  }, [invalidate])
+  return null
 }
