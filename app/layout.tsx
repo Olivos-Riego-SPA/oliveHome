@@ -13,7 +13,7 @@ const siteUrl = 'https://home.oliveplus.cl'
 const siteName = 'Olive+'
 const siteDescription =
   'Olive+ es la plataforma para gestionar el riego de tu campo con datos reales, tecnología y acompañamiento experto. Más que un software, somos tu equipo de riego.'
-const ogImage = '/images/logo.png'
+const ogImage = '/og-home.jpg'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
