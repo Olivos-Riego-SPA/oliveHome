@@ -46,7 +46,7 @@ Olive+ is the **Olivos Riego** platform that brings irrigation, soil, plant, cli
 ## Evidence on Hand
 
 - **Real platform screenshots** (a farm that authorizes being shown, "Rio Peumo"; shown as-is): `app/public/images/plataforma/` — irrigation-map, irrigation-map-comparison, irrigation-charts-comparison, monitoring, climate-etc, soil-bands, soil-advanced-delta, plant-summary, plant-map, indicators-dashboard, smart-analysis-comparison, wells-summary (~1460×820 px).
-- **Official figures:** +258 companies, +678 devices, +30,000 ha; Chile, Argentina and the US (`presentacion-comercial.md` §2).
+- **Official figures (updated 2026-11-13):** +267 clients, +751 devices, +40,000 ha; Chile, Argentina and the US.
 - **Water savings by strategy** (estimate by Olivos agronomists, published without a source): ETc 21 %, water balance 36 %, physiological threshold 43 %, regulated deficit irrigation 57 %.
 - Compatible technologies, SVG logos in `app/public/images/aliados/` (`*-color.svg`, `*-blanco.svg`):
   - DAVIS: official.

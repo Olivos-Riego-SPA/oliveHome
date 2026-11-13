@@ -126,7 +126,6 @@ export default function TutorialPage() {
   }, [query, activeModule])
 
   const featured = videos.filter((v) => v.featured)
-  const comingSoonModules = modules.filter((m) => !m.available)
 
   useEffect(() => {
     if (playing) {
@@ -222,27 +221,25 @@ export default function TutorialPage() {
             >
               Todos
             </button>
-            {modules.map((m) => {
-              const isActive = activeModule === m.name.toLowerCase()
-              return (
-                <button
-                  key={m.id}
-                  onClick={() => m.available && setActiveModule(m.name.toLowerCase())}
-                  disabled={!m.available}
-                  className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-                    !m.available
-                      ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                      : isActive
+            {/* Solo los módulos que ya tienen tutoriales */}
+            {modules
+              .filter((m) => m.available)
+              .map((m) => {
+                const isActive = activeModule === m.name.toLowerCase()
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => setActiveModule(m.name.toLowerCase())}
+                    className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                      isActive
                         ? 'bg-primary text-white border-primary'
                         : 'bg-white text-blk border-gray-200 hover:border-primary/40'
-                  }`}
-                  title={!m.available ? 'Próximamente' : undefined}
-                >
-                  {m.name}
-                  {!m.available && <span className="ml-1.5 text-[10px] opacity-70">· pronto</span>}
-                </button>
-              )
-            })}
+                    }`}
+                  >
+                    {m.name}
+                  </button>
+                )
+              })}
           </div>
         </div>
 
@@ -319,29 +316,6 @@ export default function TutorialPage() {
             </div>
           )}
         </section>
-
-        {/* Próximamente */}
-        {comingSoonModules.length > 0 && (
-          <section className="mt-16 bg-gradient-to-br from-primary/5 to-clear/5 border border-primary/10 rounded-2xl p-8 md:p-10">
-            <div className="flex items-center gap-2 mb-3">
-              <Clock className="w-5 h-5 text-primary" />
-              <h2 className="text-xl md:text-2xl font-bold text-blk">Próximamente</h2>
-            </div>
-            <p className="text-blk/70 mb-5 max-w-2xl">
-              Estamos preparando tutoriales para los siguientes módulos. Vuelve pronto para encontrar contenido nuevo.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {comingSoonModules.map((m) => (
-                <span
-                  key={m.id}
-                  className="bg-white border border-gray-200 text-blk/70 text-sm font-medium px-3 py-1.5 rounded-full"
-                >
-                  {m.name}
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
       </main>
 
       <Footer />

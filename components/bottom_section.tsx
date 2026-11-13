@@ -30,11 +30,11 @@ const accompaniment = [
   },
 ]
 
-// Cifras oficiales: OlivePlus/marketing/presentacion-comercial.md (§2, 11-11-2026)
+// Cifras oficiales, actualizadas el 13-11-2026
 const STATS = [
-  { icon: Building, label: 'Empresas', value: 258 },
-  { icon: Cpu, label: 'Dispositivos', value: 678 },
-  { icon: Map, label: 'Hectáreas', value: 30000 },
+  { icon: Building, label: 'Clientes', value: 267 },
+  { icon: Cpu, label: 'Dispositivos', value: 751 },
+  { icon: Map, label: 'Hectáreas', value: 40000 },
 ]
 
 const formatCL = (n: number) => n.toLocaleString('es-CL')

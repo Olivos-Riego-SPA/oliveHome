@@ -21,7 +21,17 @@ export const organizationSchema = {
   name: 'Olive+',
   alternateName: ['OlivePlus', 'Olive plus'],
   url: siteUrl,
-  logo: `${siteUrl}/images/logo.png`,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${siteUrl}/logo-oliveplus.png`,
+    width: 512,
+    height: 512,
+  },
+  parentOrganization: {
+    '@type': 'Organization',
+    name: 'Olivos',
+    url: 'https://www.olivos.cl',
+  },
   description:
     'Plataforma para gestionar el riego de tu campo con datos reales, tecnología y acompañamiento experto.',
   email: 'tecnologias@olivos.cl',

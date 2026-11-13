@@ -29,11 +29,11 @@ const CADENA = [
   },
 ]
 
-// Cifras oficiales (OlivePlus/marketing/presentacion-comercial.md §2)
+// Cifras oficiales, actualizadas el 13-11-2026
 const CIFRAS = [
-  { valor: '+258', etiqueta: 'empresas' },
-  { valor: '+678', etiqueta: 'dispositivos' },
-  { valor: '+30.000', etiqueta: 'hectáreas' },
+  { valor: '+267', etiqueta: 'clientes' },
+  { valor: '+751', etiqueta: 'dispositivos' },
+  { valor: '+40.000', etiqueta: 'hectáreas' },
 ]
 
 /**
