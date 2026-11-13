@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Raleway } from 'next/font/google'
 import { JsonLd, organizationSchema, softwareAppSchema, websiteSchema } from '@/components/json_ld'
+import Analytics from '@/components/analytics'
 
 const raleway = Raleway({
   subsets: ['latin'],
@@ -105,6 +106,9 @@ export default function RootLayout({
         <div className="relative z-10">
           {children}
         </div>
+
+        {/* Google Analytics 4: la misma propiedad que oliveplus.cl */}
+        <Analytics />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -50,6 +50,10 @@ const DISPOSICION = [
   { esquina: 0, x: 0, z: 0, rotY: 0, alto: 3.2 },
 ]
 const INDICE_ANALISIS = 5
+// Módulo que se elige al soltar el bloque en cada esquina (Riego comparte la 0 con Pozo)
+const MODULO_DE_ESQUINA = [0, 2, 3, 4]
+// Píxeles a partir de los cuales un gesto es arrastre y no clic
+const UMBRAL_ARRASTRE = 6
 // Con Análisis activo la cámara se aleja: el análisis es la vista de todo el campo
 const ZOOM_ANALISIS = 40
 const BORDE_Y = -0.3
@@ -793,15 +797,20 @@ function NubeOlive({ activo, animar }: { activo: boolean; animar: boolean }) {
 
 /* ---------- Rotación del bloque ---------- */
 
+/** Giro compartido entre el arrastre (DOM) y el bloque (three): mientras se arrastra, manda el mouse */
+export type Giro = { arrastrando: boolean; angulo: number }
+
 function BloqueRotatorio({
   esquina,
   zoomCerca,
   reducedMotion,
+  giro,
   children,
 }: {
   esquina: number
   zoomCerca: number
   reducedMotion: boolean
+  giro: React.MutableRefObject<Giro>
   children: React.ReactNode
 }) {
   const grupo = useRef<THREE.Group>(null)
@@ -815,9 +824,16 @@ function BloqueRotatorio({
     let delta = objetivo - angulo.current
     // Camino corto: girar 90° hacia adelante, no 270° hacia atrás
     delta = Math.atan2(Math.sin(delta), Math.cos(delta))
-    angulo.current = reducedMotion
-      ? angulo.current + delta
-      : angulo.current + delta * (1 - Math.exp(-dt * 4.5))
+    if (giro.current.arrastrando) {
+      // Arrastrando: el bloque sigue al mouse/dedo sin amortiguar
+      angulo.current = giro.current.angulo
+      delta = 1 // cámara alejada mientras gira
+    } else {
+      angulo.current = reducedMotion
+        ? angulo.current + delta
+        : angulo.current + delta * (1 - Math.exp(-dt * 4.5))
+      giro.current.angulo = angulo.current
+    }
     grupo.current.rotation.y = angulo.current
 
     // Dolly: mientras gira, la cámara se aleja; al llegar al módulo, se acerca.
@@ -848,6 +864,43 @@ export default function EscenaBloque({
   onSeleccionModulo,
   pausada = false,
 }: PropsEscena) {
+  const giro = useRef<Giro>({ arrastrando: false, angulo: 0 })
+  const caja = useRef<HTMLDivElement>(null)
+  const arrastre = useRef<{ x: number; base: number; movido: boolean } | null>(null)
+  const [interactuo, setInteractuo] = useState(false)
+
+  // Arrastrar en horizontal gira el bloque; al soltar se acomoda en la esquina más cercana
+  const alBajar = (e: React.PointerEvent) => {
+    if (e.button !== 0) return
+    arrastre.current = { x: e.clientX, base: giro.current.angulo, movido: false }
+  }
+  const alMover = (e: React.PointerEvent) => {
+    const a = arrastre.current
+    if (!a) return
+    const dx = e.clientX - a.x
+    if (!a.movido && Math.abs(dx) < UMBRAL_ARRASTRE) return
+    if (!a.movido) {
+      a.movido = true
+      giro.current.arrastrando = true
+      caja.current?.setPointerCapture(e.pointerId)
+      setInteractuo(true)
+    }
+    // Todo el ancho del componente ≈ media vuelta
+    const ancho = caja.current?.clientWidth || 600
+    giro.current.angulo = a.base + (dx / ancho) * Math.PI
+  }
+  const alSoltar = () => {
+    const a = arrastre.current
+    arrastre.current = null
+    if (!a?.movido) return
+    giro.current.arrastrando = false
+    // Esquina más cercana al ángulo en que quedó (el bloque descansa en -esquina·90°)
+    const esquina = (((Math.round(-giro.current.angulo / (Math.PI / 2)) % 4) + 4) % 4)
+    const modulo = MODULO_DE_ESQUINA[esquina]
+    // El bloque sigue desde donde quedó, sin saltos, hasta la esquina elegida
+    onSeleccionModulo?.(modulo)
+  }
+
   // En el mismo orden que MODULOS y DISPOSICION
   const dispositivos = [
     (activo: boolean) => <EquipoRiego activo={activo} animar={!reducedMotion} />,
@@ -859,6 +912,14 @@ export default function EscenaBloque({
   ]
 
   return (
+    <div
+      ref={caja}
+      className="relative h-full w-full cursor-grab touch-pan-y select-none active:cursor-grabbing"
+      onPointerDown={alBajar}
+      onPointerMove={alMover}
+      onPointerUp={alSoltar}
+      onPointerCancel={alSoltar}
+    >
     <Canvas
       orthographic
       frameloop={pausada ? 'never' : 'demand'}
@@ -887,6 +948,7 @@ export default function EscenaBloque({
         esquina={DISPOSICION[moduloActivo].esquina}
         zoomCerca={moduloActivo === INDICE_ANALISIS ? ZOOM_ANALISIS : ZOOM_CERCA}
         reducedMotion={reducedMotion}
+        giro={giro}
       >
         <Terreno voxels={voxels} />
         <Vinedo />
@@ -901,14 +963,45 @@ export default function EscenaBloque({
             scale={1.3}
             onClick={(e) => {
               e.stopPropagation()
+              // Si fue un arrastre, no es un clic
+              if (e.delta > UMBRAL_ARRASTRE) return
+              setInteractuo(true)
               onSeleccionModulo?.(i)
             }}
-            onPointerOver={() => (document.body.style.cursor = 'pointer')}
-            onPointerOut={() => (document.body.style.cursor = 'auto')}
+            onPointerOver={() => caja.current && (caja.current.style.cursor = 'pointer')}
+            onPointerOut={() => caja.current && (caja.current.style.cursor = '')}
           >
             {dispositivos[i](moduloActivo === i)}
           </group>
         ))}
+
+        {/* Marcadores: dejan claro qué se puede tocar. El activo va destacado (o lo reemplaza el aviso) */}
+        {DISPOSICION.map((p, i) =>
+          mostrarAviso && i === moduloActivo ? null : (
+            <Html
+              key={`marcador-${i}`}
+              position={[
+                p.x,
+                // La nube de Indicadores va al centro: su marcador baja a la nube para no
+                // montarse sobre el de la esquina de atrás
+                altura(p.x, p.z) + (i === INDICE_ANALISIS ? p.alto * 0.85 : p.alto * 1.3 + 0.35),
+                p.z,
+              ]}
+              center
+              zIndexRange={[20, 0]}
+            >
+              <Marcador
+                indice={i}
+                activo={i === moduloActivo}
+                animar={!reducedMotion}
+                onElegir={() => {
+                  setInteractuo(true)
+                  onSeleccionModulo?.(i)
+                }}
+              />
+            </Html>
+          ),
+        )}
 
         {/* Aviso tipo callout: punto en el dispositivo → línea que se dibuja → letrero */}
         {mostrarAviso && (
@@ -978,6 +1071,64 @@ export default function EscenaBloque({
       <SombraSuave />
       {!pausada && <LimitadorCuadros />}
     </Canvas>
+
+      {/* Pista de uso: se va con la primera interacción */}
+      <div
+        aria-hidden="true"
+        className={
+          'pointer-events-none absolute inset-x-0 bottom-3 flex justify-center transition-opacity duration-500 ' +
+          (interactuo ? 'opacity-0' : 'opacity-100')
+        }
+      >
+        <span className="rounded-full bg-slate-900/55 px-3.5 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
+          Arrastra para girar · toca un dispositivo
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/** Marcador flotante sobre un dispositivo: ícono del módulo, pulso y nombre al pasar el mouse */
+function Marcador({
+  indice,
+  activo,
+  animar,
+  onElegir,
+}: {
+  indice: number
+  activo: boolean
+  animar: boolean
+  onElegir: () => void
+}) {
+  const m = MODULOS[indice]
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onElegir()
+      }}
+      onPointerDown={(e) => e.stopPropagation()}
+      aria-label={`Ver el módulo ${m.nombre}`}
+      aria-pressed={activo}
+      className="group relative grid h-9 w-9 cursor-pointer place-items-center"
+    >
+      {animar && !activo && (
+        <span className="absolute inset-0 animate-ping rounded-full bg-[#fab500]/50 [animation-duration:2.2s]" />
+      )}
+      <span
+        className={
+          'relative grid h-9 w-9 place-items-center rounded-full shadow-lg ring-2 transition-transform group-hover:scale-110 ' +
+          (activo ? 'bg-[#fab500] ring-white' : 'bg-white ring-[#fab500]')
+        }
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={m.icono} alt="" className="h-6 w-6 object-contain" />
+      </span>
+      <span className="pointer-events-none absolute left-1/2 top-full mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-900/75 px-2.5 py-0.5 text-[11px] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
+        {m.nombre}
+      </span>
+    </button>
   )
 }
 

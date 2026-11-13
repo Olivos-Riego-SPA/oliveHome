@@ -8,6 +8,7 @@ import logo from './../app/public/images/logo-oliveplus-negativo.svg'
 
 const ENLACES = [
   { href: '/#modulos', texto: 'Módulos' },
+  { href: '/#demo', texto: 'Cómo funciona' },
   { href: '/#pro', texto: 'PRO' },
   { href: '/#nosotros', texto: 'Nosotros' },
   { href: '/tutoriales', texto: 'Tutoriales' },

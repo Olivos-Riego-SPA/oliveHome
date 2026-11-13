@@ -14,6 +14,7 @@ import capPozo from '@/app/public/images/plataforma/pozo-resumen.png'
 import capIndicadores from '@/app/public/images/plataforma/indicadores-recorte.png'
 import Ondas from './ondas'
 import Resaltado from './resaltado'
+import RedesSociales from '@/components/redes_sociales'
 import { ICONOS_MODULO } from './modulos_datos'
 
 import { APP_URL } from './constantes'
@@ -162,7 +163,8 @@ export default function HeroPlataforma() {
               <b className="font-bold text-white">Riega con datos, no con intuición.</b> Olive+ reúne riego,
               suelo, planta, clima y pozos en una sola pantalla, con un equipo agronómico que te acompaña.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <RedesSociales className="mt-6" />
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="#contacto"
                 className="inline-flex h-[52px] items-center rounded-full bg-marca-verde px-8 text-[19px] font-bold text-white shadow-[0_8px_24px_rgba(2,60,30,0.28)] transition-colors hover:bg-marca-verdeOscuro focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-marca-primario"

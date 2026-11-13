@@ -224,3 +224,24 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Demo guiada (/lab-demo): destello del sello PRO, igual que en Olive+ (proShine) */
+@keyframes demo-pro-brillo {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  18%, 100% { transform: translateX(250%) skewX(-20deg); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .demo-pro-brillo {
+    animation: demo-pro-brillo 6s ease-in-out 1.2s infinite;
+  }
+}
+/* Demo guiada: halo que late alrededor del foco */
+@keyframes foco-pulso {
+  0% { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .foco-pulso {
+    animation: foco-pulso 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+  }
+}

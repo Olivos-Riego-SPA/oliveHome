@@ -3,7 +3,6 @@ import { ArrowUpRight, Mail, MessageCircle } from 'lucide-react'
 import fotoCampo from '@/app/public/images/fondocentro.webp'
 import Ondas from './ondas'
 import Resaltado from './resaltado'
-import CopiarCorreo from './copiar_correo'
 import { APP_URL, CORREO_CONTACTO, WHATSAPP_NUMERO } from './constantes'
 
 const ASUNTO = 'Quiero conocer Olive+'
@@ -23,7 +22,7 @@ const BOTON =
 
 /**
  * Cierre de la home: escribirnos. Correo y WhatsApp con el mismo peso (el agricultor en terreno usa
- * WhatsApp), copiar el correo por si el mailto no abre, y qué pasa después de escribir.
+ * WhatsApp), y qué pasa después de escribir. El correo y el teléfono no van escritos: se llega solo por los botones.
  */
 export default function Contacto() {
   return (
@@ -58,12 +57,6 @@ export default function Contacto() {
               <MessageCircle className="h-5 w-5" aria-hidden="true" />
               Escríbenos por WhatsApp
             </a>
-          </div>
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-white/80">
-            <span>{CORREO_CONTACTO}</span>
-            <CopiarCorreo correo={CORREO_CONTACTO} />
-            <span aria-hidden="true" className="text-white/40">·</span>
-            <span>+56 9 3372 0947</span>
           </div>
         </div>
 

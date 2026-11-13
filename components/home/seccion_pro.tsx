@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image, { type StaticImageData } from 'next/image'
 import { MonitorPlay, Tv, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -80,15 +80,96 @@ const BENEFICIOS_MONITOREO = [
  * Sección PRO: los 4 verbos (entender, comparar, anticipar, vigilar) como estructura.
  * Cada verbo responde una pregunta del agricultor y muestra dónde vive en Olive+.
  * Monitoreo es el protagonista de "Vigilar", en su televisor.
+ *
+ * En escritorio el bloque de los verbos queda fijo (sticky) bajo la cabecera mientras se hace scroll:
+ * cada tramo de scroll pasa al verbo siguiente y, después del último, la página sigue bajando.
+ * No se bloquea el scroll del navegador: el contenedor es más alto y el scroll se traduce en verbo.
+ * En pantallas chicas el bloque no cabe en la pantalla, así que quedan las pestañas de siempre.
  */
+
+/** Alto de la cabecera fija en escritorio (site_header.tsx, lg:h-20) */
+const CABECERA = 80
+/** Scroll que dura cada verbo, en altos de pantalla */
+const TRAMO_VH = 70
 export default function SeccionPro() {
   const [activo, setActivo] = useState(0)
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([])
+  const fijoRef = useRef<HTMLDivElement>(null)
+  // Destino del desplazamiento automático al tocar un verbo: mientras dura, el scroll no cambia el
+  // verbo (si no, pasaría por los verbos intermedios y la imagen parpadearía)
+  const destinoRef = useRef<number | null>(null)
+  // Bloque fijo solo en escritorio
+  const [fijado, setFijado] = useState(false)
   const v = VERBOS[activo]
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const aplicar = () => setFijado(mq.matches)
+    aplicar()
+    mq.addEventListener('change', aplicar)
+    return () => mq.removeEventListener('change', aplicar)
+  }, [])
+
+  // El avance del scroll dentro del contenedor alto elige el verbo
+  useEffect(() => {
+    if (!fijado) return
+    let cuadro = 0
+    const medir = () => {
+      cuadro = 0
+      const el = fijoRef.current
+      if (!el) return
+      if (destinoRef.current !== null) {
+        // Todavía viajando hacia el verbo tocado: se mantiene; al llegar, el scroll retoma el mando
+        if (Math.abs(window.scrollY - destinoRef.current) > 4) return
+        destinoRef.current = null
+      }
+      const r = el.getBoundingClientRect()
+      const recorrido = r.height - (window.innerHeight - CABECERA)
+      const avance = Math.min(1, Math.max(0, (CABECERA - r.top) / recorrido))
+      const i = Math.min(VERBOS.length - 1, Math.floor(avance * VERBOS.length))
+      setActivo((a) => (a === i ? a : i))
+    }
+    const alScroll = () => {
+      if (!cuadro) cuadro = requestAnimationFrame(medir)
+    }
+    // Si el usuario mueve la rueda, toca la pantalla o usa el teclado a mitad de camino, manda él
+    const soltar = () => {
+      destinoRef.current = null
+    }
+    // Del teclado, solo las teclas que desplazan la página (las flechas ←/→ cambian de verbo)
+    const TECLAS_SCROLL = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ']
+    const soltarTecla = (e: KeyboardEvent) => {
+      if (TECLAS_SCROLL.includes(e.key)) soltar()
+    }
+    medir()
+    window.addEventListener('scroll', alScroll, { passive: true })
+    window.addEventListener('resize', alScroll)
+    window.addEventListener('wheel', soltar, { passive: true })
+    window.addEventListener('touchstart', soltar, { passive: true })
+    window.addEventListener('keydown', soltarTecla)
+    return () => {
+      window.removeEventListener('scroll', alScroll)
+      window.removeEventListener('resize', alScroll)
+      window.removeEventListener('wheel', soltar)
+      window.removeEventListener('touchstart', soltar)
+      window.removeEventListener('keydown', soltarTecla)
+      cancelAnimationFrame(cuadro)
+    }
+  }, [fijado])
 
   const elegir = (i: number, foco = false) => {
     setActivo(i)
     if (foco) tabsRef.current[i]?.focus()
+    // Con el bloque fijo, el verbo lo manda el scroll: se lleva la página al centro de su tramo
+    const el = fijoRef.current
+    if (fijado && el) {
+      const r = el.getBoundingClientRect()
+      const recorrido = r.height - (window.innerHeight - CABECERA)
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      const destino = Math.round(Math.min(max, window.scrollY + r.top - CABECERA + ((i + 0.5) / VERBOS.length) * recorrido))
+      destinoRef.current = destino
+      window.scrollTo({ top: destino, behavior: 'smooth' })
+    }
   }
   const onTeclas = (e: React.KeyboardEvent) => {
     const n = VERBOS.length
@@ -99,7 +180,7 @@ export default function SeccionPro() {
   }
 
   return (
-    <section id="pro" className="relative overflow-hidden bg-marca-p700 text-white">
+    <section id="pro" className="relative overflow-clip bg-marca-p700 text-white">
       {/* Borde superior curvo: el celeste del explorador entra en la sección */}
       <svg aria-hidden="true" viewBox="0 0 1440 120" preserveAspectRatio="none" className="relative block h-12 w-full lg:h-24">
         <path d="M0 0H1440V60C1180 96 900 108 640 96C380 84 170 64 0 70Z" fill="#028C44" transform="translate(0 6)" />
@@ -135,80 +216,88 @@ export default function SeccionPro() {
           <b className="text-white">vigilar</b> lo que pasa en tu campo.
         </p>
 
-        {/* Los 4 verbos */}
+        {/* Los 4 verbos. En escritorio: contenedor alto + bloque fijo bajo la cabecera */}
         <div
-          role="tablist"
-          aria-label="Lo que hace PRO"
-          onKeyDown={onTeclas}
-          className="mt-14 grid grid-cols-2 gap-x-4 gap-y-2 border-b border-white/15 lg:mt-16 lg:grid-cols-4 lg:gap-x-8"
+          ref={fijoRef}
+          className="mt-14 lg:mt-16"
+          style={fijado ? { height: `calc(${VERBOS.length * TRAMO_VH}vh + 100vh - ${CABECERA}px)` } : undefined}
         >
-          {VERBOS.map((x, i) => {
-            const sel = i === activo
-            return (
-              <button
-                key={x.id}
-                ref={(el) => {
-                  tabsRef.current[i] = el
-                }}
-                role="tab"
-                id={`tab-pro-${x.id}`}
-                aria-selected={sel}
-                aria-controls="panel-pro"
-                tabIndex={sel ? 0 : -1}
-                onClick={() => elegir(i)}
-                className="group relative pb-5 pt-2 text-left"
-              >
-                <span
-                  className={cn(
-                    'block text-[1.9rem] font-extrabold leading-none tracking-[-0.01em] transition-colors duration-200 sm:text-[2.6rem]',
-                    sel ? 'text-white' : 'text-white/55 group-hover:text-white/80',
-                  )}
-                >
-                  {x.verbo}
-                </span>
-                <span
-                  className={cn(
-                    'mt-2 block text-[15px] font-semibold transition-colors duration-200',
-                    sel ? 'text-white/85' : 'text-white/70 group-hover:text-white/85',
-                  )}
-                >
-                  {x.pregunta}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    'absolute inset-x-0 -bottom-px h-[3px] origin-left rounded-full bg-marca-ambar transition-transform duration-300 ease-[cubic-bezier(.2,.7,.2,1)]',
-                    sel ? 'scale-x-100' : 'scale-x-0',
-                  )}
-                />
-              </button>
-            )
-          })}
-        </div>
+          <div className={cn(fijado && 'sticky flex flex-col justify-center')} style={fijado ? { top: CABECERA, height: `calc(100vh - ${CABECERA}px)` } : undefined}>
+            <div
+              role="tablist"
+              aria-label="Lo que hace PRO"
+              onKeyDown={onTeclas}
+              className="grid grid-cols-2 gap-x-4 gap-y-2 border-b border-white/15 lg:grid-cols-4 lg:gap-x-8"
+            >
+              {VERBOS.map((x, i) => {
+                const sel = i === activo
+                return (
+                  <button
+                    key={x.id}
+                    ref={(el) => {
+                      tabsRef.current[i] = el
+                    }}
+                    role="tab"
+                    id={`tab-pro-${x.id}`}
+                    aria-selected={sel}
+                    aria-controls="panel-pro"
+                    tabIndex={sel ? 0 : -1}
+                    onClick={() => elegir(i)}
+                    className="group relative pb-5 pt-2 text-left"
+                  >
+                    <span
+                      className={cn(
+                        'block text-[1.9rem] font-extrabold leading-none tracking-[-0.01em] transition-colors duration-200 sm:text-[2.6rem]',
+                        sel ? 'text-white' : 'text-white/55 group-hover:text-white/80',
+                      )}
+                    >
+                      {x.verbo}
+                    </span>
+                    <span
+                      className={cn(
+                        'mt-2 block text-[15px] font-semibold transition-colors duration-200',
+                        sel ? 'text-white/85' : 'text-white/70 group-hover:text-white/85',
+                      )}
+                    >
+                      {x.pregunta}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        'absolute inset-x-0 -bottom-px h-[3px] origin-left rounded-full bg-marca-ambar transition-transform duration-300 ease-[cubic-bezier(.2,.7,.2,1)]',
+                        sel ? 'scale-x-100' : 'scale-x-0',
+                      )}
+                    />
+                  </button>
+                )
+              })}
+            </div>
 
-        {/* Panel del verbo: alto constante para que lo de abajo no se mueva al cambiar de verbo */}
-        <div
-          id="panel-pro"
-          role="tabpanel"
-          aria-labelledby={`tab-pro-${v.id}`}
-          className="mt-12 grid items-center gap-12 lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[minmax(0,500px)_minmax(0,1fr)]"
-        >
-          {/* Los 4 textos ocupan la misma celda: la celda mide lo que el más largo */}
-          <div className="grid">
-            {VERBOS.map((x) => (
-              <div
-                key={x.id}
-                aria-hidden={x.id !== v.id}
-                className={cn('lg:[grid-area:1/1]', x.id === v.id ? 'tarjeta-entra' : 'hidden lg:block lg:invisible')}
-              >
-                <TextoVerbo verbo={x} />
+            {/* Panel del verbo: alto constante para que lo de abajo no se mueva al cambiar de verbo */}
+            <div
+              id="panel-pro"
+              role="tabpanel"
+              aria-labelledby={`tab-pro-${v.id}`}
+              className="mt-12 grid items-center gap-12 lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[minmax(0,500px)_minmax(0,1fr)]"
+            >
+              {/* Los 4 textos ocupan la misma celda: la celda mide lo que el más largo */}
+              <div className="grid">
+                {VERBOS.map((x) => (
+                  <div
+                    key={x.id}
+                    aria-hidden={x.id !== v.id}
+                    className={cn('lg:[grid-area:1/1]', x.id === v.id ? 'tarjeta-entra' : 'hidden lg:block lg:invisible')}
+                  >
+                    <TextoVerbo verbo={x} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div className="relative aspect-[16/10]">
-            <div key={`visual-${v.id}`} className="tarjeta-entra absolute inset-0">
-              <VisualVerbo id={v.id} />
+              <div className="relative aspect-[16/10]">
+                <div key={`visual-${v.id}`} className="tarjeta-entra absolute inset-0">
+                  <VisualVerbo id={v.id} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
