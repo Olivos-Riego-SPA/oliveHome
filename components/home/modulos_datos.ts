@@ -105,8 +105,8 @@ export const MODULOS_HOME: Modulo[] = [
       'Un mapa del campo pintado por nivel de estrés.',
       'Funciona también sin sensores, con lecturas manuales de bomba Scholander.',
     ],
-    funcionaCon: [FLORA],
-    notaCompatibles: 'Microtensiómetros o lecturas manuales',
+    funcionaCon: [FLORA, TALGIL],
+    notaCompatibles: 'Microtensiómetros, también conectados a tu Talgil, o lecturas manuales',
   },
   {
     id: 'pozo',

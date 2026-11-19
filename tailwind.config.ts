@@ -9,10 +9,6 @@ const config: Config = {
   ],
   theme: {
   	extend: {
-		textShadow: {
-			// Añade esta línea
-			'outline': '1px 1px 0 rgba(255, 255, 255, 1), -1px -1px 0 rgba(255, 255, 255, 1), 1px -1px 0 rgba(255, 255, 255, 1), -1px 1px 0 rgba(255, 255, 255, 1)',
-		  },
 		backgroundImage: {
 			'dots': 'radial-gradient(#ccc 1px, transparent 1px)',
 			'diagonal-lines': 'linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 50%, #ccc 50%, #ccc 75%, transparent 75%, transparent)',
@@ -158,7 +154,6 @@ const config: Config = {
   },
   plugins: [
 	require("tailwindcss-animate"),
-	require('tailwindcss-textshadow'),
 ],
 };
 export default config;

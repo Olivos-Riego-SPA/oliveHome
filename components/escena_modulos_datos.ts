@@ -34,7 +34,7 @@ export const MODULOS = [
     nombre: 'Planta',
     descripcion: 'Seguimiento del estado hídrico directamente en la planta.',
     icono: iconPlanta.src,
-    dispositivo: 'Sensores FLORAPULSE o lecturas manuales con bomba Scholander.',
+    dispositivo: 'Sensores FLORAPULSE o mediante TALGIL, o lecturas manuales con bomba Scholander.',
   },
   {
     id: 'clima',

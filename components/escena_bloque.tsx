@@ -2,7 +2,6 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { MODULOS } from './escena_modulos_datos'
 
@@ -868,6 +867,9 @@ export default function EscenaBloque({
   const caja = useRef<HTMLDivElement>(null)
   const arrastre = useRef<{ x: number; base: number; movido: boolean } | null>(null)
   const [interactuo, setInteractuo] = useState(false)
+  // Puntos 3D (uno por marcador + el del aviso al final) y el HTML que se ubica sobre cada uno
+  const anclas = useRef<(THREE.Object3D | null)[]>([])
+  const etiquetas = useRef<(HTMLDivElement | null)[]>([])
 
   // Arrastrar en horizontal gira el bloque; al soltar se acomoda en la esquina más cercana
   const alBajar = (e: React.PointerEvent) => {
@@ -975,21 +977,58 @@ export default function EscenaBloque({
           </group>
         ))}
 
+        {/* Anclas 3D de los marcadores (giran con el bloque); el HTML vive en la capa de abajo */}
+        {DISPOSICION.map((p, i) => (
+          <group
+            key={`ancla-${i}`}
+            ref={(o) => {
+              anclas.current[i] = o
+            }}
+            position={[
+              p.x,
+              // La nube de Indicadores va al centro: su marcador baja a la nube para no
+              // montarse sobre el de la esquina de atrás
+              altura(p.x, p.z) + (i === INDICE_ANALISIS ? p.alto * 0.85 : p.alto * 1.3 + 0.35),
+              p.z,
+            ]}
+          />
+        ))}
+        {/* Ancla del aviso: sobre el dispositivo activo */}
+        <group
+          ref={(o) => {
+            anclas.current[DISPOSICION.length] = o
+          }}
+          position={[
+            DISPOSICION[moduloActivo].x,
+            altura(DISPOSICION[moduloActivo].x, DISPOSICION[moduloActivo].z) +
+              DISPOSICION[moduloActivo].alto,
+            DISPOSICION[moduloActivo].z,
+          ]}
+        />
+      </BloqueRotatorio>
+
+      {/* Va después del bloque para proyectar con la rotación ya aplicada en este cuadro */}
+      <ProyectorAnclas anclas={anclas} etiquetas={etiquetas} />
+
+      <SombraSuave />
+      {!pausada && <LimitadorCuadros />}
+    </Canvas>
+
+      {/* Capa HTML sobre el canvas: marcadores y aviso, posicionados por ProyectorAnclas.
+          Se renderizan en el mismo árbol de React (no con <Html> de drei, que crea una raíz
+          de React por elemento y con Next 16.4 la desmontaba al cargar: el marcador quedaba vacío) */}
+      <div className="pointer-events-none absolute inset-0">
         {/* Marcadores: dejan claro qué se puede tocar. El activo va destacado (o lo reemplaza el aviso) */}
-        {DISPOSICION.map((p, i) =>
-          mostrarAviso && i === moduloActivo ? null : (
-            <Html
-              key={`marcador-${i}`}
-              position={[
-                p.x,
-                // La nube de Indicadores va al centro: su marcador baja a la nube para no
-                // montarse sobre el de la esquina de atrás
-                altura(p.x, p.z) + (i === INDICE_ANALISIS ? p.alto * 0.85 : p.alto * 1.3 + 0.35),
-                p.z,
-              ]}
-              center
-              zIndexRange={[20, 0]}
-            >
+        {DISPOSICION.map((_, i) => (
+          <div
+            key={`marcador-${i}`}
+            ref={(el) => {
+              etiquetas.current[i] = el
+            }}
+            className={'absolute left-0 top-0' + (mostrarAviso && i === moduloActivo ? ' hidden' : '')}
+            style={{ visibility: 'hidden' }}
+          >
+            <div className="pointer-events-auto absolute" style={{ transform: 'translate3d(-50%, -50%, 0)' }}>
               <Marcador
                 indice={i}
                 activo={i === moduloActivo}
@@ -999,24 +1038,22 @@ export default function EscenaBloque({
                   onSeleccionModulo?.(i)
                 }}
               />
-            </Html>
-          ),
-        )}
+            </div>
+          </div>
+        ))}
 
         {/* Aviso tipo callout: punto en el dispositivo → línea que se dibuja → letrero */}
         {mostrarAviso && (
-        <Html
-          key={moduloActivo}
-          position={[
-            DISPOSICION[moduloActivo].x,
-            altura(DISPOSICION[moduloActivo].x, DISPOSICION[moduloActivo].z) +
-              DISPOSICION[moduloActivo].alto,
-            DISPOSICION[moduloActivo].z,
-          ]}
-          center
-          wrapperClass="pointer-events-none"
+        <div
+          ref={(el) => {
+            etiquetas.current[DISPOSICION.length] = el
+          }}
+          className="absolute left-0 top-0 z-30"
+          style={{ visibility: 'hidden' }}
         >
-          <div className="relative flex -translate-y-full flex-col items-center">
+          <div className="absolute" style={{ transform: 'translate3d(-50%, -50%, 0)' }}>
+          {/* La key reinicia la animación de línea y letrero en cada cambio de módulo */}
+          <div key={moduloActivo} className="relative flex -translate-y-full flex-col items-center">
             <div className={'h-14 w-px bg-[#fab500]' + (reducedMotion ? '' : ' linea-aviso')} />
             <div className="h-1.5 w-1.5 -translate-y-px rounded-full bg-[#fab500]" />
             {/* Letrero al costado del extremo superior de la línea */}
@@ -1064,13 +1101,10 @@ export default function EscenaBloque({
               `}</style>
             )}
           </div>
-        </Html>
+          </div>
+        </div>
         )}
-      </BloqueRotatorio>
-
-      <SombraSuave />
-      {!pausada && <LimitadorCuadros />}
-    </Canvas>
+      </div>
 
       {/* Pista de uso: se va con la primera interacción */}
       <div
@@ -1159,6 +1193,33 @@ function SombraSuave() {
 }
 
 /** Pide un cuadro nuevo 30 veces por segundo (las animaciones usan el tiempo, no los cuadros) */
+/**
+ * Ubica cada etiqueta HTML sobre la proyección en pantalla de su ancla 3D, en cada cuadro.
+ * Los marcadores ganan z-index según cercanía a la cámara (los de atrás quedan debajo).
+ */
+function ProyectorAnclas({
+  anclas,
+  etiquetas,
+}: {
+  anclas: React.RefObject<(THREE.Object3D | null)[]>
+  etiquetas: React.RefObject<(HTMLDivElement | null)[]>
+}) {
+  const punto = useMemo(() => new THREE.Vector3(), [])
+  useFrame(({ camera, size }) => {
+    anclas.current.forEach((ancla, i) => {
+      const el = etiquetas.current[i]
+      if (!ancla || !el) return
+      ancla.getWorldPosition(punto).project(camera)
+      const x = ((punto.x + 1) / 2) * size.width
+      const y = ((1 - punto.y) / 2) * size.height
+      el.style.transform = `translate3d(${x}px, ${y}px, 0)`
+      if (i < DISPOSICION.length) el.style.zIndex = String(Math.round(((1 - punto.z) / 2) * 20))
+      el.style.visibility = 'visible'
+    })
+  })
+  return null
+}
+
 function LimitadorCuadros() {
   const invalidate = useThree((s) => s.invalidate)
   useEffect(() => {
